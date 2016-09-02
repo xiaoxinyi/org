@@ -1,0 +1,521 @@
+* Tutorial
+** Paper Reading
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/D6/D6FD20F2-226C-49D9-B4DB-FF1AF8C9C987.pdf][Caffe: Convolutional Architecture for Fast Feature Embedding]]
+    SCHEDULED: <2016-08-24 Wed>
+
+** Linux Note
+*** sed
+#+BEGIN_SRC sh
+  # from line 90 to line 100
+  sed -n '90, 100p' file.txt
+
+  # line 100
+  sed -n '100, 1p' file.txt
+
+  # from line a to line b
+  sed -n 'a, bp' file.txt
+
+  # if a > b return line a
+#+END_SRC
+*** nvidia installation
+#+BEGIN_SRC sh
+sudo add-apt-repository ppa:graphics-drivers/ppa
+
+sudo apt-get update && sudo apt-get install nvidia-355
+#+END_SRC
+*** apt-get list installed packages
+#+BEGIN_SRC sh
+apt list --installed
+#+END_SRC
+*** list all users
+#+BEGIN_SRC sh
+  sed 's/:.*//' /etc/passwd
+#+END_SRC
+*** list all usergroup =groups=
+*** usermod
+**** add =newuser= to group =staff=
+#+BEGIN_SRC sh
+sudo usermod -G staff newuser
+#+END_SRC
+**** modify =newuser= to =newuser1=
+#+BEGIN_SRC sh
+sudo usermod -l newsuer1 newuser
+#+END_SRC
+*** watch GPU
+#+BEGIN_SRC sh
+watch -n 0.5 nvidia-smi
+#+END_SRC
+*** install =nvidia= driver
+#+BEGIN_SRC sh
+sudo add-apt-repository ppa:graphics-drivers/ppa
+
+sudo apt-get update && sudo apt-get install nvidia-355
+#+END_SRC
+*** inspect symbol in =.so=
+    #+BEGIN_SRC sh
+    objdump -tT libName.so | grep symbol
+    #+END_SRC
+** Tmux Note
+*** =tmux= plugin installation
+Add plugin to the list of TPM plugins in =.tmux.conf=:
+#+BEGIN_SRC sh
+set -g @plugin 'tmux-plugins/tmux-pain-control'
+#+END_SRC
+Hit =prefix + I= to fetch the plugin and source it.
+** deep learning note
+*** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
+   SCHEDULED: <2016-08-21 Sun>
+*** TODO [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
+   SCHEDULED: <2016-08-21 Sun>
+*** TODO [[https://cs224d.stanford.edu/notebooks/vanishing_grad_example.html][vanishing gradient]]
+   SCHEDULED: <2016-08-22 Mon>
+*** softmax loss for one example
+    \[p_k = \frac{e^{f_k}}{\sum_j e^{f_j}}\]
+    \[L_i = -log(p_{y_i})\]
+    \[\frac{\partial L_i}{\partial f_k} = 1 - I(y_i = k)\]
+
+     Suppose the probabilities we computed were =p = [0.2, 0.3, 0.5]=,
+    and that the correct class was the middle one (with probability
+    0.3). According to this derivation the gradient on the scores
+    would be =df = [0.2, -0.7, 0.5]=.
+    
+    #+BEGIN_SRC python
+      dscores = probs
+      dscores[range(num_examples),y] -= 1
+      dscores /= num_examples
+
+      dW = np.dot(X.T, dscores)
+      db = np.sum(dscores, axis=0, keepdims=True)
+      dW += reg*W # don't forget the regularization gradient
+    #+END_SRC
+*** TODO [[http://sebastianruder.com/optimizing-gradient-descent/][gradient descent]] 
+    SCHEDULED: <2016-08-23 Tue>
+**** [[https://www.quora.com/What-is-the-vanishing-gradient-problem][Quora answer]]
+- Problem
+
+Gradient based methods learn a parameter's value by understanding how
+a small change in the parameter's value will affect the network's
+output. If a change in the parameter's value causes very small change
+in the network's output - the network just can't learn the parameter
+effectively, which is a problem. 
+
+This is exactly what's happening in the vanishing gradient problem --
+the gradients of the network's output with respect to the parameters
+in the early layers become extremely small. That's a fancy way of
+saying that even a large change in the value of parameters for the
+early layers doesn't have a big effect on the output. Let's try to
+understand when and why does this problem happen. 
+
+- Cause
+
+Vanishing gradient problem depends on the choice of the activation
+function. Many common activation functions (e.g sigmoid or tanh)
+'squash' their input into a very small output range in a very
+non-linear fashion. For example, sigmoid maps the real number line
+onto a "small" range of [0, 1]. As a result, there are large regions
+of the input space which are mapped to an extremely small range. In
+these regions of the input space, even a large change in the input
+will produce a small change in the output - hence the gradient is
+small. 
+
+This becomes much worse when we stack multiple layers of such
+non-linearities on top of each other. For instance, first layer will
+map a large input region to a smaller output region, which will be
+mapped to an even smaller region by the second layer, which will be
+mapped to an even smaller region by the third layer and so on. As a
+result, even a large change in the parameters of the first layer
+doesn't change the output much. 
+
+We can avoid this problem by using activation functions which don't
+have this property of 'squashing' the input space into a small
+region. A popular choice is Rectified Linear Unit which maps   
+x to max(0,x) .
+
+Hopefully, this helps you understand the problem of vanishing
+gradients. I'd also recommend reading along this iPython notebook
+which does a small experiment to understand and visualize this
+problem, as well as highlights the difference between the behavior of
+sigmoid and rectified linear units. 
+*** TODO [[http://colah.github.io/][deep learning blog (colah)]]
+    SCHEDULED: <2016-08-25 Thu>
+*** Caffe Note
+**** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
+***** using caffe to extract features
+     #+BEGIN_SRC sh
+       find `pwd`/examples/images -type f -exec echo {} \; > examples/_temp/temp.txt
+       sed "s/$/ 0/" examples/_temp/temp.txt > examples/_temp/file_list.txt
+       cd $CAFFE
+       ./build/tools/extract_features models/bvlc_reference_caffenet/bvlc_reference examples/_temp/imagenet_val.prototxt example/_temp/feature fc7 10 lmdb GPU 0
+     #+END_SRC
+***** general command for extract feature using caffe
+#+BEGIN_SRC sh
+  extract_features pretrained_net_param  feature_extraction_proto_file \
+  extract_feature_blob_name1[,name2,...]  save_feature_dataset_name1[,name2,...] \
+  num_mini_batches  db_type  [CPU/GPU] [DEVICE_ID=0]
+#+END_SRC
+- 参数1是模型参数（.caffemodel）文件的路径。
+
+- 参数2是描述网络结构的prototxt文件。程序会从参数1的caffemodel文件里找
+  对应名称的layer读取参数。 
+
+- 参数3是需要提取的blob名称，对应网络结构prototxt里的名称。blob名称可
+  以有多个，用逗号分隔。每个blob提取出的特征会分开保存。 
+
+- 参数4是保存提取出来的特征的数据库路径，可以有多个，和参数3中一一对应，
+  以逗号分隔。如果用LMDB的话，路径必须是不存在的（已经存在的话要改名或
+  者删除）。 
+
+
+- 参数5是提取特征所需要执行的batch数量。这个数值和prototxt里DataLayer
+  中的Caffe的DataLayer(或者ImageDataLayer)中的batch_size参数相乘，就是
+  会被输入网络的总样本数。设置参数时需要确保batch_size *
+  num_mini_batches等于需要提取特征的样本总数，否则提取的特征就会不够数
+  或者是多了。 
+
+
+- 参数6是保存特征使用的数据库类型，支持lmdb和leveldb两种(小写)。推荐使用
+lmdb，因为lmdb的访问速度更快，还支持多进程同时读取。 
+
+- 参数7决定使用GPU还是CPU，直接写对应的三个大写字母就行。省略不写的话默
+认是CPU。 
+
+- 参数8决定使用哪个GPU，在多GPU的机器上跑的时候需要指定。省略不写的话默
+认使用0号GPU。 
+
+注意事项
+- 提取特征时，网络运行在Test模式下
+    * Dropout层在Test模式下不起作用，不必担心dropout影响结果
+    * Train和Test的参数写在同一个Prototxt里的时候，改参数的时候注意不
+      要改错地方(比如有两个DataLayer的情况下) 
+- 减去均值图像
+    * 提取特征时，输入的图像要减去均值
+    * 应该减去训练数据集的均值
+- 提取哪一层
+    * 不要提取Softmax网络的最后一层(如AlexNet的fc8)，因为最后一层已经
+      是分类任务的输出，作为特征的可推广性不够好
+***** read from lmdb
+     #+BEGIN_SRC python
+       import numpy as np
+       import caffe
+       import lmdb
+       from caffe.proto import caffe_pb2
+
+       fea_lmdb = lmdb.open('featureA')
+       lmdb_txn = fea_lmdb.begin()
+       lmdb_cursor = txn.cursor()
+       features = []
+
+       for key, value in lmdb_cursor:
+           datum = caffe_pb2.Datum()
+           datum.ParseFromString(value)
+           data = caffe.io.datum_to_array(datum)
+           features.append(data)
+
+     #+END_SRC
+***** image recognition using =cos= similarity measure
+#+BEGIN_SRC python
+
+  import numpy as np
+  import caffe
+  import lmdb
+  from caffe.proto import caffe_pb2
+  from scipy import spatial
+
+
+  # 3 steps to read form lmdb
+  fea_lmdb = lmdb.open('/root/caffe/examples/_temp/featureA')
+  lmdb_txn = fea_lmdb.begin()
+  lmdb_cursor = lmdb_txn.cursor()
+  features = []
+
+  for key, value in lmdb_cursor:
+      datum = caffe_pb2.Datum()
+      # Parse from serialized data
+      datum.ParseFromString(value)
+      data = caffe.io.datum_to_array(datum)
+      features.append(data)
+
+  out = []
+  for f in features:
+      out.append(f.flatten())
+
+  n = len(out)
+  similarity = np.zeros((n, n), dtype=np.double)
+
+  for i in xrange(n):
+      for j in xrange(n):
+        # cosin distance
+          similarity[i, j] = 1 - spatial.distance.cosine(out[i], out[j])
+
+#+END_SRC
+***** =cos= similarity result
+- accuracy (true ture) : 53 / 55
+#+BEGIN_SRC python
+a = similarity[0:10, 0:10]
+  array([[ 1.        ,  0.63231419,  0.84345085,  0.73587363,  0.58211244,
+           0.67306891,  0.46881317,  0.56938226,  0.65432654,  0.55240935],
+         [ 0.63231419,  1.        ,  0.68508232,  0.56741804,  0.74116358,
+           0.81706845,  0.71951714,  0.75391089,  0.78529276,  0.74174079],
+         [ 0.84345085,  0.68508232,  1.        ,  0.78416825,  0.61635946,
+           0.72695667,  0.54473343,  0.60050371,  0.70046374,  0.58715887],
+         [ 0.73587363,  0.56741804,  0.78416825,  1.        ,  0.50801387,
+           0.60814318,  0.5046651 ,  0.52948304,  0.68054069,  0.49502061],
+         [ 0.58211244,  0.74116358,  0.61635946,  0.50801387,  1.        ,
+           0.88589477,  0.56183335,  0.72687896,  0.60917844,  0.87135289],
+         [ 0.67306891,  0.81706845,  0.72695667,  0.60814318,  0.88589477,
+           1.        ,  0.63597132,  0.76000156,  0.7042399 ,  0.87401555],
+         [ 0.46881317,  0.71951714,  0.54473343,  0.5046651 ,  0.56183335,
+           0.63597132,  1.        ,  0.58212342,  0.64319046,  0.6254508 ],
+         [ 0.56938226,  0.75391089,  0.60050371,  0.52948304,  0.72687896,
+           0.76000156,  0.58212342,  1.        ,  0.74652927,  0.72233884],
+         [ 0.65432654,  0.78529276,  0.70046374,  0.68054069,  0.60917844,
+           0.7042399 ,  0.64319046,  0.74652927,  1.        ,  0.61672591],
+         [ 0.55240935,  0.74174079,  0.58715887,  0.49502061,  0.87135289,
+           0.87401555,  0.6254508 ,  0.72233884,  0.61672591,  1.        ]])
+
+np.sum(a > 0.5)
+96
+#+END_SRC
+- false true : 2 / 100
+#+BEGIN_SRC python
+In [1]: ab = similarity[0:10, 10:]
+
+In [2]: ab
+Out[2]:
+array([[ 0.2842583 ,  0.37596221,  0.27628312,  0.12041221,  0.29636999,
+         0.13618284,  0.1381707 ,  0.17832465,  0.21937008,  0.40752771],
+       [ 0.32961919,  0.49064045,  0.29595205,  0.093565  ,  0.39657901,
+         0.17370467,  0.15514055,  0.2672414 ,  0.31652746,  0.46922921],
+       [ 0.31926577,  0.45413662,  0.26234978,  0.1560283 ,  0.30816957,
+         0.15273065,  0.16850629,  0.22604249,  0.25764858,  0.44164225],
+       [ 0.26623039,  0.3611369 ,  0.20121232,  0.11351721,  0.21726182,
+         0.11916629,  0.1431136 ,  0.20710409,  0.22387793,  0.31652456],
+       [ 0.30927462,  0.35910132,  0.2650208 ,  0.08663475,  0.37263798,
+         0.10722143,  0.09815253,  0.17950735,  0.20988739,  0.50689106],
+       [ 0.32089366,  0.40492257,  0.28595893,  0.09466663,  0.37709065,
+         0.10737807,  0.10595637,  0.19340299,  0.23139416,  0.51704389],
+       [ 0.29795872,  0.3890121 ,  0.26349005,  0.08589599,  0.36945176,
+         0.16923292,  0.11844475,  0.24970864,  0.31689723,  0.36337912],
+       [ 0.28911623,  0.33516171,  0.30897566,  0.12046317,  0.36436887,
+         0.10022814,  0.14957088,  0.29092572,  0.3343103 ,  0.47673998],
+       [ 0.31926479,  0.43550698,  0.31588098,  0.09185497,  0.33737191,
+         0.15741605,  0.16819127,  0.34134218,  0.38785466,  0.41883917],
+       [ 0.29190126,  0.3130953 ,  0.25801771,  0.07097081,  0.34608239,
+         0.09577894,  0.0842366 ,  0.14185045,  0.19112799,  0.47368384]])
+
+In [3]: np.sum(ab > 0.5)
+Out[3]: 2
+
+#+END_SRC
+*** Autoencoders
+**** TODO [[http://ufldl.stanford.edu/tutorial/unsupervised/Autoencoders/][UFLDL]]
+     SCHEDULED: <2016-08-25 Thu>
+** Emacs Note
+*** =elpy=
+**** use-package =elpy=
+#+BEGIN_SRC lisp
+  ;; bind return key with <RET>, must be capitalized
+  (:bind (M-<RET> . elpy-shell-send-current-statement))
+#+END_SRC
+**** elpy send function definition =C-M-x=
+*** =ac-c-headers= locate =c= headers
+#+BEGIN_SRC sh
+gcc -xc++ -E -v -
+#+END_SRC
+#+BEGIN_SRC elisp
+  (add-to-list achead:include-directories "/usr/include")
+#+END_SRC
+*** =org= mode
+**** move item up/down =M-up= =org-metaup=
+**** change all level to next level =M-shift-left=
+** Python Note
+*** sample from an nd-array
+#+BEGIN_SRC python
+# sample from an nd-arrary
+numpy.random.choice(range(vocab_size), p=p.ravel())
+#+END_SRC
+*** install package anaconda ubuntu
+#+BEGIN_SRC sh
+cd ~/anaconda2/bin
+su
+./pip install package
+#+END_SRC
+*** =sum= to keepdim
+#+BEGIN_SRC python
+np.sum(array, axis=0, keepdims=True)
+#+END_SRC
+*** =numpy.clip=
+Clip (limit) the values in an array.
+
+Given an interval, values outside the interval are clipped to the
+interval edges. For example, if an interval of [0, 1] is specified,
+values smaller than 0 become 0, and values larger than 1 become 1.
+
+#+BEGIN_SRC python
+>>> a = np.arange(10)
+>>> np.clip(a, 1, 8)
+array([1, 1, 2, 3, 4, 5, 6, 7, 8, 8])
+>>> a
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+>>> np.clip(a, 3, 6, out=a)
+array([3, 3, 3, 3, 4, 5, 6, 6, 6, 6])
+>>> a = np.arange(10)
+>>> a
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+>>> np.clip(a, [3,4,1,1,1,4,4,4,4,4], 8)
+array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
+#+END_SRC
+** Docker Note
+*** docker installation
+#+BEGIN_SRC sh
+  wget -qO- https://get.docker.com/ | sh
+  sudo usermod -aG docker sxwl1080
+#+END_SRC
+*** docker sourcelist
+ubuntu: /etc/default/docker 
+#+BEGIN_SRC example
+DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5000
+#+END_SRC
+*** docker push
+    unauthorized: authentication required
+    sudo docker login --username=xiaoxinyi
+*** docker machine installation
+#+BEGIN_SRC sh
+  curl -L https://github.com/docker/machine/releases/download/v0.7.0/docker-machine-`uname -s`-`uname -m` > /usr/local/bin/docker-machine  
+#+END_SRC
+** Proxy
+*** proxychains
+#+BEGIN_SRC sh
+sudo apt-get install -y proxychains
+sudo cat "socks5  127.0.0.1 9999" >> /etc/proxychains.conf
+ssh -p 1022  -fN -D 127.0.0.1:9999 root@192.168.199.1
+proxychains curl www.google.co.jp
+#+END_SRC
+** Cuda Note
+*** Configuring the kernel launch
+kernel<<<grid of block, block of threads>>>(...)
+square<<<dim3(bx,by,bz), dime(tx,ty,tz), sharem>>>(...)
+
+grid of blocks : bx * by * bz
+block of threads : tx * ty * tz
+shared memory per block in bytes
+*** Convert color to black and white
+I = (R + G + B) / 3
+I = .299f * R + .587f * G + .114f * B
+*** [[http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#cuda-programming-model][ =nvcc= introduction]]
+*** cs344 Note
+- GPU is responsible for allocating blocks to SM(streaming multiprocessors)
+- A block cannot run on more than one SM
+- An SM may run more than one block
+- All the SMs are running in parallel
+- Threads in different block shouldn't cooperate
+- Cuda make few guarantees about when and where thread blocks will run
+- consequences
+  + no assumptions blocks -> SM
+  + no communication between blocks
+- CUDA guarantees that:
+  + all threads in a block run on the same SM at the same time
+  + all blocks in a kernel finish before any blocks from next run
+- threadIdx : thread within block threadIdx.x threadIdx.y
+  + blockDim : size of block
+  + blockIdx : block within grid
+  + gridDim : size of grid
+*** GPU memory model
+[[./images/gpu-memory-model.png]]
+  * All threads from a block can access the same variable in that
+    block shared memory
+  * Threads from two different blocks can access the same variable in
+    global memory
+  * Threads from different blocks have their own copy of local
+    variables in local memory
+  * Threads from the same block have their own copy of local variables
+    in local memory
+
+*** barrier
+point in program where threads stop and wait. when all threads have
+reached the barrier, they can proceed.
+[[./images/synchronized.png]]
+*** High-level strategies
+1. Maximize arithmetic intensity
+\[\frac{Math}{Memory}\]
+  - maximize compute ops per thread
+  - minimize time spent on memory per thread
+     + move frequently-accessed data to fast memory
+       local > shared >> global >> cpu memory
+coalesce memeory
+[[./images/coalesce.png]]
+2. avoid thread divergence
+
+*** =cudaMalloc=
+    #+BEGIN_SRC c++
+      float *device_data=NULL;  
+      size_t size = 1024*sizeof(float);  
+      cudaMalloc((void**)&device_data, size);  
+    #+END_SRC
+而device_data这个指针是存储在主存上的。之所以取device_data的地址，是为
+了将cudaMalloc在显存上获得的数组首地址赋值给device_data。在函数中为形
+参赋值是不会在实参中繁盛变化的，但是指针传递的是地址 
+
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/1E/1ED49076-5D40-4E5F-B232-918B17EA1596.pdf][What Every Programmer Should Know About Memory]]
+    SCHEDULED: <2016-08-27 Sat>
+
+
+
+
+
+
+
+*** levels of optimization
+**** Picking good algorithms 3 - 10x
+     - use mergesort \[O(nlgn)\] vs insertion sort \[O(n^2)\]
+**** Basic principles for efficiency 3 - 10x
+     - write cache-aware code. e.g. traverse rows vs cols
+**** Arch-specific detailed optimizations 30% - 80%
+     - block for the L1 cache
+     - vector register SSE, AVX
+**** \[\mu\]-optimization at instruction level
+     - float recipe =sqrt = (float)0x5f3659da - (a >> 1)=
+*** profiler
+    - gprof
+    - vtune
+    - verysleepy
+*** Amdahl's law
+    - total speedup from parallelization is limited by protion of time
+      spent doing some thing to be parralledized 
+    \[ max speedup -> \frac{1}{1 - p}  \] p is % parallelizable time
+*** most GPU codes are memory limited, always start by measuring bandwith
+** http
+*** [[http://www.imooc.com/article/3582][http tutorial imooc]]
+*** HTTP: Get & Post
+Http协议定义了很多与服务器交互的方法，最基本的有4种，分别是
+GET,POST,PUT,DELETE. 一个URL地址用于描述一个网络上的资源，而HTTP中的
+GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操作。 我们
+最常见的就是GET和POST了。GET一般用于获取/查询资源信息，而POST一般用于
+更新资源信息. 
+- GET提交的数据会放在URL之后，以?分割URL和传输数据，参数之间以&相连，
+  如EditPosts.aspx?name=test1&id=123456. POST方法是把提交的数据放在
+  HTTP包的Body中.
+- GET提交的数据大小有限制（因为浏览器对URL的长度有限制），而POST方法提
+  交的数据没有限制.
+- GET方式需要使用Request.QueryString来取得变量的值，而POST方式通过
+  Request.Form来获取变量的值，也就是说Get是通过地址栏来传值，而Post是
+  通过提交表单来传值。
+- GET方式提交数据，会带来安全问题，比如一个登录页面，通过GET方式提交数
+  据时，用户名和密码将出现在URL上，如果页面可以被缓存或者其他人可以访
+  问这台机器，就可以从历史记录获得该用户的账号和密码. 
+
+** OSX
+*** lsof
+#+BEGIN_SRC sh
+  lsof -i TCP:port -n 
+  lsof -i UDP:port -n
+＃ listen ports
+lsof -iTCP -sTCP:LISTEN -n -P
+lsof -i -n -P | grep -i listen
+#+END_SRC
+
+
+
+** Torch
+*** TODO [[https://github.com/torch/nn/blob/master/doc/training.md#stochasticgradientmodule-criterion][gradient in torch]]
+    SCHEDULED: <2016-08-31 Wed>
