@@ -65,8 +65,8 @@ Hit =prefix + I= to fetch the plugin and source it.
 ** deep learning note
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
-*** TODO [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
-   SCHEDULED: <2016-08-21 Sun>
+*** DONE [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
+   CLOSED: [2016-09-02 Fri 21:50] SCHEDULED: <2016-08-21 Sun>
 *** TODO [[https://cs224d.stanford.edu/notebooks/vanishing_grad_example.html][vanishing gradient]]
    SCHEDULED: <2016-08-22 Mon>
 *** softmax loss for one example
@@ -328,6 +328,9 @@ gcc -xc++ -E -v -
 *** =org= mode
 **** move item up/down =M-up= =org-metaup=
 **** change all level to next level =M-shift-left=
+**** =C-x n s= (org-narrow-to-subtree)
+**** =C-x n w= (widen)
+*** [[http://tuhdo.github.io/][tutorial]]
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -365,6 +368,14 @@ array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 >>> np.clip(a, [3,4,1,1,1,4,4,4,4,4], 8)
 array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
 #+END_SRC
+** Ipython Note
+*** ipython config
+    #+BEGIN_SRC sh
+      ipython profile create
+
+      emacs -nw /Users/zhangli/.ipython/profile_default/ipython_config.py
+    #+END_SRC
+=c.TerminalInteractiveShell.confirm_exit = False=
 ** Docker Note
 *** docker installation
 #+BEGIN_SRC sh
@@ -383,6 +394,8 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5
 #+BEGIN_SRC sh
   curl -L https://github.com/docker/machine/releases/download/v0.7.0/docker-machine-`uname -s`-`uname -m` > /usr/local/bin/docker-machine  
 #+END_SRC
+*** docker swarm
+    - [[http://blog.arungupta.me/clustering-docker-swarm-techtip85/][tutorial]]
 ** Proxy
 *** proxychains
 #+BEGIN_SRC sh
@@ -514,8 +527,9 @@ lsof -iTCP -sTCP:LISTEN -n -P
 lsof -i -n -P | grep -i listen
 #+END_SRC
 
-
-
 ** Torch
 *** TODO [[https://github.com/torch/nn/blob/master/doc/training.md#stochasticgradientmodule-criterion][gradient in torch]]
     SCHEDULED: <2016-08-31 Wed>
+** Git
+*** git stash
+**** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
