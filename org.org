@@ -55,6 +55,7 @@ sudo apt-get update && sudo apt-get install nvidia-355
     #+BEGIN_SRC sh
     objdump -tT libName.so | grep symbol
     #+END_SRC
+*** [[http://blog.csdn.net/wooin/article/details/580679][ =ldconfig= ]]
 ** Tmux Note
 *** =tmux= plugin installation
 Add plugin to the list of TPM plugins in =.tmux.conf=:
@@ -138,6 +139,7 @@ problem, as well as highlights the difference between the behavior of
 sigmoid and rectified linear units. 
 *** TODO [[http://colah.github.io/][deep learning blog (colah)]]
     SCHEDULED: <2016-08-25 Thu>
+*** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
 *** Caffe Note
 **** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 ***** using caffe to extract features
@@ -310,6 +312,8 @@ Out[3]: 2
 *** Autoencoders
 **** TODO [[http://ufldl.stanford.edu/tutorial/unsupervised/Autoencoders/][UFLDL]]
      SCHEDULED: <2016-08-25 Thu>
+*** TODO [[https://github.com/soumith/convnet-benchmarks][convnet benchmarks]]
+    SCHEDULED: <2016-09-09 Fri>
 ** Emacs Note
 *** =elpy=
 **** use-package =elpy=
@@ -368,6 +372,7 @@ array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 >>> np.clip(a, [3,4,1,1,1,4,4,4,4,4], 8)
 array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
 #+END_SRC
+*** [[https://pyformat.info/][python string format]]
 ** Ipython Note
 *** ipython config
     #+BEGIN_SRC sh
@@ -376,6 +381,13 @@ array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
       emacs -nw /Users/zhangli/.ipython/profile_default/ipython_config.py
     #+END_SRC
 =c.TerminalInteractiveShell.confirm_exit = False=
+*** ipython share kernel
+    #+BEGIN_SRC ipython
+    %connect_info
+    #+END_SRC
+    #+BEGIN_SRC sh
+    ipython console --existing /Users/zhangli/Library/Jupyter/runtime/kernel-0f76f3a7-104c-49dc-8942-162b50f5799b.json
+    #+END_SRC
 ** Docker Note
 *** docker installation
 #+BEGIN_SRC sh
@@ -530,6 +542,40 @@ lsof -i -n -P | grep -i listen
 ** Torch
 *** TODO [[https://github.com/torch/nn/blob/master/doc/training.md#stochasticgradientmodule-criterion][gradient in torch]]
     SCHEDULED: <2016-08-31 Wed>
+*** JIT complier
+    In the beginning, a compiler was responsible for turning a
+    high-level language (defined as higher level than assembler) into
+    object code (machine instructions), which would then be linked (by
+    a linker) into an executable. 
+
+    At one point in the evolution of languages, compilers would compile a
+    high-level language into pseudo-code, which would then be interpreted
+    (by an interpreter) to run your program. This eliminated the object
+    code and executables, and allowed these languages to be portable to
+    multiple operating systems and hardware platforms. Pascal (which
+    compiled to P-Code) was one of the first; Java and C# are more recent
+    examples. Eventually the term P-Code was replaced with bytecode, since
+    most of the pseudo-operations are a byte long. 
+
+    A Just-In-Time (JIT) compiler is a feature of the run-time
+    interpreter, that instead of interpreting bytecode every time a method
+    is invoked, will compile the bytecode into the machine code
+    instructions of the running machine, and then invoke this object code
+    instead. Ideally the efficiency of running object code will overcome
+    the inefficiency of recompiling the program every time it runs. 
+*** install =fblualib=
+**** git clone [[https://github.com/facebook/fblualib][repository]]
+**** =./install_all.sh=
+**** =fb.debugger=
+     #+BEGIN_SRC lua
+     local debugger = require('fb.debugger')
+     debugger.enter()
+     #+END_SRC
+**** =fblualib= [[https://github.com/facebook/fblualib][git repository]]
 ** Git
 *** git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
+** C++
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
+    SCHEDULED: <2016-09-06 二>
+**** [[https://www.gitbook.com/book/chenxiaowei/cpp_concurrency_in_action/details][resource for book]]
