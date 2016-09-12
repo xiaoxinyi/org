@@ -63,6 +63,8 @@ Add plugin to the list of TPM plugins in =.tmux.conf=:
 set -g @plugin 'tmux-plugins/tmux-pain-control'
 #+END_SRC
 Hit =prefix + I= to fetch the plugin and source it.
+*** move panel to a new window
+    =prefix + : break-panel=
 ** deep learning note
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
@@ -335,6 +337,10 @@ gcc -xc++ -E -v -
 **** =C-x n s= (org-narrow-to-subtree)
 **** =C-x n w= (widen)
 *** [[http://tuhdo.github.io/][tutorial]]
+*** etags
+    #+BEGIN_SRC sh
+      find . -name "*.cpp" -print -o -name "*.h" -print | etags -  
+    #+END_SRC
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -571,7 +577,30 @@ lsof -i -n -P | grep -i listen
      local debugger = require('fb.debugger')
      debugger.enter()
      #+END_SRC
-**** =fblualib= [[https://github.com/facebook/fblualib][git repository]]
+**** TODO =fblualib= [[https://github.com/facebook/fblualib][git repository]]
+     SCHEDULED: <2016-09-11 Sun>
+*** TODO [[https://github.com/facebook/fb.resnet.torch/tree/master/pretrained][fb.resnet.torch]]
+    SCHEDULED: <2016-09-11 Sun>
+*** [[https://github.com/torch/nngraph][ =nngraph= tutorial]]
+*** TODO [[https://github.com/torch/demos][torch demos and tutorial]]
+    SCHEDULED: <2016-09-12 Mon>
+*** [[http://jucor.github.io/torch-doc-template/tensor.html][torch tensor reference]]
+** Lua
+*** =__index= metamethod
+    当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
+    寻找该 =table= 的 =metatable= （假定有 =metatable= ）中的 =__index= 键。
+    如果 =__index= 包含一个表格， =Lua= 会在表格中查找相应的键。 
+    #+BEGIN_SRC lua
+      other = { foo = 3 }
+      > t = setmetatable({}, { __index = other })
+      > t.foo
+      3
+      > t.bar
+      nil
+    #+END_SRC
+    如果 =__index= 包含一个函数的话， =Lua= 就会调用那个函数， =table=
+    和键会作为参数传递给函数。 =__index= 元方法查看表中元素是否存在，如果
+    不存在，返回结果为 =nil= ；如果存在则由 =__index= 返回结果。
 ** Git
 *** git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
