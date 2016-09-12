@@ -58,9 +58,9 @@ sudo apt-get update && sudo apt-get install nvidia-355
 *** [[http://blog.csdn.net/wooin/article/details/580679][ =ldconfig= ]]
 ** Tmux Note
 *** =tmux= plugin installation
-Add plugin to the list of TPM plugins in =.tmux.conf=:
+    Add plugin to the list of TPM plugins in =.tmux.conf=:
 #+BEGIN_SRC sh
-set -g @plugin 'tmux-plugins/tmux-pain-control'
+  set -g @plugin 'tmux-plugins/tmux-pain-control'
 #+END_SRC
 Hit =prefix + I= to fetch the plugin and source it.
 *** move panel to a new window
@@ -341,6 +341,9 @@ gcc -xc++ -E -v -
     #+BEGIN_SRC sh
       find . -name "*.cpp" -print -o -name "*.h" -print | etags -  
     #+END_SRC
+*** =babel-language=
+    - directory =~/.emacs.d/elpa/org-20160620=
+    - add =ob-lang.el=
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -590,17 +593,45 @@ lsof -i -n -P | grep -i listen
     当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
     寻找该 =table= 的 =metatable= （假定有 =metatable= ）中的 =__index= 键。
     如果 =__index= 包含一个表格， =Lua= 会在表格中查找相应的键。 
-    #+BEGIN_SRC lua
+    #+BEGIN_SRC lua :results output
       other = { foo = 3 }
-      > t = setmetatable({}, { __index = other })
-      > t.foo
-      3
-      > t.bar
-      nil
+      t = setmetatable({}, { __index = other })
+      print(t.foo)
+
+      print(t.bar)
     #+END_SRC
+
+    #+RESULTS:
+    : 3
+    : nil
+
     如果 =__index= 包含一个函数的话， =Lua= 就会调用那个函数， =table=
     和键会作为参数传递给函数。 =__index= 元方法查看表中元素是否存在，如果
     不存在，返回结果为 =nil= ；如果存在则由 =__index= 返回结果。
+    #+BEGIN_SRC lua :results output
+      mytable = setmetatable({key1 = "value1"}, {
+        __index = function(mytable, key)
+          if key == "key2" then
+            return "metatablevalue"
+          else
+            return nil
+          end
+        end
+      })
+
+      print('hello world')
+      print(mytable.key1,mytable.key2)
+    #+END_SRC
+
+    #+RESULTS:
+    : hello world
+    : value1	metatablevalue
+
+    1. 在表中查找，如果找到，返回该元素，找不到则继续
+    2. 判断该表是否有元表，如果没有元表，返回 =nil= ，有元表则继续。
+    3. 判断元表有没有 =__index= 方法，如果 =__index= 方法为 =nil= ，则返回 =nil= ；如
+       果 =__index= 方法是一个表，则重复1、2、3；如果 =__index= 方法是一个函数，
+       则返回该函数的返回值。 
 ** Git
 *** git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
