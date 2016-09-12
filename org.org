@@ -344,6 +344,7 @@ gcc -xc++ -E -v -
 *** =babel-language=
     - directory =~/.emacs.d/elpa/org-20160620=
     - add =ob-lang.el=
+*** =query-replace-regexp= [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Regexp-Replace.html][note]]
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -631,7 +632,50 @@ lsof -i -n -P | grep -i listen
     2. 判断该表是否有元表，如果没有元表，返回 =nil= ，有元表则继续。
     3. 判断元表有没有 =__index= 方法，如果 =__index= 方法为 =nil= ，则返回 =nil= ；如
        果 =__index= 方法是一个表，则重复1、2、3；如果 =__index= 方法是一个函数，
-       则返回该函数的返回值。 
+       则返回该函数的返回值。
+*** =__newindex= 
+    __newindex 元方法用来对表更新，__index则用来对表访问 。
+    当你给表的一个缺少的索引赋值，解释器就会查找__newindex 元方法：如
+    果存在则调用这个函数而不进行赋值操作。 
+    #+BEGIN_SRC lua :results output
+      mymetatable = {}
+      mytable = setmetatable({key1 = "value1"}, { __newindex = mymetatable })
+
+      print(mytable.key1)
+
+      mytable.newkey = "新值2"
+      print(mytable.newkey,mymetatable.newkey)
+
+      mytable.key1 = "新值1"
+      print(mytable.key1,mymetatable.key1)
+    #+END_SRC
+
+    #+RESULTS:
+    : value1
+    : nil	新值2
+    : 新值1	nil
+
+    以上实例中表设置了元方法 =__newindex= ，在对新索引键（newkey）赋值时
+    （mytable.newkey = "新值2"），会调用元方法，而不进行赋值。而如果对
+    已存在的索引键（key1），则会进行赋值，而不调用元方法 =__newindex=
+    。 
+    #+BEGIN_SRC lua :results output
+      mytable = setmetatable({key1 = "value1"}, {
+        __newindex = function(mytable, key, value)
+              rawset(mytable, key, "\""..value.."\"")
+
+        end
+      })
+
+      mytable.key1 = "new value"
+      mytable.key2 = 4
+
+      print(mytable.key1,mytable.key2)
+    #+END_SRC
+
+    #+RESULTS:
+    : new value	"4"
+
 ** Git
 *** git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
@@ -639,3 +683,6 @@ lsof -i -n -P | grep -i listen
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
     SCHEDULED: <2016-09-06 二>
 **** [[https://www.gitbook.com/book/chenxiaowei/cpp_concurrency_in_action/details][resource for book]]
+
+ 
+
