@@ -336,6 +336,11 @@ gcc -xc++ -E -v -
 **** change all level to next level =M-shift-left=
 **** =C-x n s= (org-narrow-to-subtree)
 **** =C-x n w= (widen)
+**** literate programming in =org mode=
+***** TODO [[http://www.howardism.org/Technical/Emacs/literate-devops.html][literate programming howard abrams]]
+      SCHEDULED: <2016-09-13 Tue>
+***** TODO [[http://www.howardism.org/Technical/LP/introduction.html][introduction Howard Abrams]]
+      SCHEDULED: <2016-09-13 Tue>
 *** [[http://tuhdo.github.io/][tutorial]]
 *** etags
     #+BEGIN_SRC sh
@@ -345,6 +350,16 @@ gcc -xc++ -E -v -
     - directory =~/.emacs.d/elpa/org-20160620=
     - add =ob-lang.el=
 *** =query-replace-regexp= [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Regexp-Replace.html][note]]
+*** =impatient-mode=
+    #+BEGIN_SRC elisp
+      ;; impatient-mode
+      ;; useage: httpd start impatient-mode
+      ;; localhost:8080/imp
+      (use-package impatient-mode
+        :ensure t
+        :config
+        (require 'impatient-mode))
+    #+END_SRC
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -589,6 +604,57 @@ lsof -i -n -P | grep -i listen
 *** TODO [[https://github.com/torch/demos][torch demos and tutorial]]
     SCHEDULED: <2016-09-12 Mon>
 *** [[http://jucor.github.io/torch-doc-template/tensor.html][torch tensor reference]]
+*** [[https://github.com/torch/torch7/wiki/Cheatsheet][torch cheatsheet]]
+*** COMMENT torch install packages
+    #+BEGIN_SRC sh
+      luarocks install torch-rocks install https://raw.github.com/andresy/mnist/master/rocks/mnist-scm-1.rockspec
+    #+END_SRC
+*** create a =nn= example
+    #+BEGIN_SRC lua
+      function createModel(nGPU)
+         require 'cunn'
+
+         local model = nn.Sequential()
+
+         local function block(...)
+            local arg = {...}
+            local no = arg[2]
+            model:add(nn.SpatialConvolution(...))
+            model:add(nn.SpatialBatchNormalization(no,1e-3))
+            model:add(nn.ReLU(true))
+            model:add(nn.SpatialConvolution(no, no, 1, 1, 1, 1, 0, 0))
+            model:add(nn.SpatialBatchNormalization(no,1e-3))
+            model:add(nn.ReLU(true))
+            model:add(nn.SpatialConvolution(no, no, 1, 1, 1, 1, 0, 0))
+            model:add(nn.SpatialBatchNormalization(no,1e-3))
+            model:add(nn.ReLU(true))
+         end
+
+         local function mp(...)
+            model:add(nn.SpatialMaxPooling(...))
+         end
+
+         block(3, 96, 11, 11, 4, 4, 5, 5)
+         mp(3, 3, 2, 2, 1, 1)
+         block(96, 256, 5, 5, 1, 1, 2, 2)
+         mp(3, 3, 2, 2, 1, 1)
+         block(256, 384, 3, 3, 1, 1, 1, 1)
+         mp(3, 3, 2, 2, 1, 1)
+         block(384, 1024, 3, 3, 1, 1, 1, 1)
+
+         model:add(nn.SpatialAveragePooling(7, 7, 1, 1))
+         model:add(nn.View(-1):setNumInputDims(3))
+         model:add(nn.Linear(1024,1000))
+         model:add(nn.LogSoftMax())
+
+         model.imageSize = 256
+         model.imageCrop = 224
+
+         return model:cuda()
+      end
+    #+END_SRC
+*** resnet torch 
+    - [[https://github.com/szagoruyko/wide-residual-networks][resnet git repository Sergey Zagoruyko]]
 ** Lua
 *** =__index= metamethod
     当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
@@ -659,6 +725,9 @@ lsof -i -n -P | grep -i listen
     （mytable.newkey = "新值2"），会调用元方法，而不进行赋值。而如果对
     已存在的索引键（key1），则会进行赋值，而不调用元方法 =__newindex=
     。 
+    #+RESULTS:
+    : new value	"4"
+
     #+BEGIN_SRC lua :results output
       mytable = setmetatable({key1 = "value1"}, {
         __newindex = function(mytable, key, value)
@@ -672,9 +741,25 @@ lsof -i -n -P | grep -i listen
 
       print(mytable.key1,mytable.key2)
     #+END_SRC
+*** iterate =string=
+    #+BEGIN_SRC lua :results output
+      a = 'fds.fd.ds'
+
+      for char in a:gmatch"." do
+         print(char)
+      end
+    #+END_SRC
 
     #+RESULTS:
-    : new value	"4"
+    : f
+    : d
+    : s
+    : .
+    : f
+    : d
+    : .
+    : d
+    : s
 
 ** Git
 *** git stash
@@ -683,6 +768,7 @@ lsof -i -n -P | grep -i listen
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
     SCHEDULED: <2016-09-06 二>
 **** [[https://www.gitbook.com/book/chenxiaowei/cpp_concurrency_in_action/details][resource for book]]
-
+** Alfred
+*** [[http://www.alfredworkflow.com/][workflow repository]]
  
 
