@@ -65,7 +65,7 @@ sudo apt-get update && sudo apt-get install nvidia-355
 Hit =prefix + I= to fetch the plugin and source it.
 *** move panel to a new window
     =prefix + : break-panel=
-** deep learning note
+** Deep learning Note
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
 *** DONE [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
@@ -143,7 +143,14 @@ sigmoid and rectified linear units.
     SCHEDULED: <2016-08-25 Thu>
 *** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
 *** backward
-**** [[https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html][backward gradient]]
+**** [[https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html][backward gradient for batch normalization]]
+
+       \[ y_i = BN_{r, \beta}(x_i) \] 
+       \[ \mu_{}_{}_{}_\Beta \leftarrow \frac{1}{m}\sum_{i-1}^m x_i \]  // mini-batch mean
+       \[ \sigma_{\Beta}^{2} \leftarrow \frac{1}{m} \sum_{i=1}^{m}(x_i - \mu_{\Beta})^2 \]  // mini-batch variance
+       \[ \hat{x}_{i}  \leftarrow \frac{(x_i - \mu{}_{\Beta})^2}{\sqrt{\sigma_{\Beta}^2 + \epsilon }} \]  // normalize
+       \[ y_i \leftarrow \gamma\hat{x}_i + \beta \]  // scale and shift
+       
 ** Caffe Note
 *** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 **** using caffe to extract features
@@ -352,7 +359,7 @@ gcc -xc++ -E -v -
         :config
         (require 'impatient-mode))
     #+END_SRC
-** =org= Mode Note
+** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
 *** =C-x n s= (org-narrow-to-subtree)
@@ -365,7 +372,7 @@ gcc -xc++ -E -v -
 *** show utf-8 character =C-c C-x \=
 *** latex
 **** [[http://orgmode.org/worg/org-tutorials/org-latex-preview.html][latex configuration]]
-**** =C-c C-x C-l= latex to image
+**** =C-c C-x C-l= latex preview in org
 **** latex =tangle=
 #+BEGIN_SRC latex :tangle example.tex
   \documentclass{article}
@@ -557,7 +564,7 @@ coalesce memeory
       spent doing some thing to be parralledized 
     \[ max speedup -> \frac{1}{1 - p}  \] p is % parallelizable time
 *** most GPU codes are memory limited, always start by measuring bandwith
-** http
+** Http
 *** [[http://www.imooc.com/article/3582][http tutorial imooc]]
 *** HTTP: Get & Post
 Http协议定义了很多与服务器交互的方法，最基本的有4种，分别是
@@ -590,7 +597,6 @@ lsof -i -n -P | grep -i listen
     #+BEGIN_SRC sh :results output
       brew info imagemagick
     #+END_SRC
-
 
 ** Torch
 *** TODO [[https://github.com/torch/nn/blob/master/doc/training.md#stochasticgradientmodule-criterion][gradient in torch]]
@@ -924,14 +930,5 @@ lsof -i -n -P | grep -i listen
 **** [[https://www.gitbook.com/book/chenxiaowei/cpp_concurrency_in_action/details][resource for book]]
 ** Alfred
 *** [[http://www.alfredworkflow.com/][workflow repository]]
-\[
-e^{i\pi} = -1
-\]
-\[
-\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
-\]
-
-\( \alpha - \beta \)
-
-\alpha = \beta
-#+END_LaTeX
+** Latex
+*** [[http://latex.wikia.com/wiki/List_of_LaTeX_symbols][reference for symbol]]
