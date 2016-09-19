@@ -2,7 +2,7 @@
 ** Paper Reading
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/D6/D6FD20F2-226C-49D9-B4DB-FF1AF8C9C987.pdf][Caffe: Convolutional Architecture for Fast Feature Embedding]]
     SCHEDULED: <2016-08-24 Wed>
-
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]] [[http://arxiv.org/abs/1502.03167][{arxiv}]] 
 ** Linux Note
 *** sed
 #+BEGIN_SRC sh
@@ -605,6 +605,7 @@ lsof -i -n -P | grep -i listen
     SCHEDULED: <2016-09-12 Mon>
 *** [[http://jucor.github.io/torch-doc-template/tensor.html][torch tensor reference]]
 *** [[https://github.com/torch/torch7/wiki/Cheatsheet][torch cheatsheet]]
+*** TODO [[https://github.com/torch/tutorials][torch tutorial]]
 *** COMMENT torch install packages
     #+BEGIN_SRC sh
       luarocks install torch-rocks install https://raw.github.com/andresy/mnist/master/rocks/mnist-scm-1.rockspec
@@ -655,6 +656,9 @@ lsof -i -n -P | grep -i listen
     #+END_SRC
 *** resnet torch 
     - [[https://github.com/szagoruyko/wide-residual-networks][resnet git repository Sergey Zagoruyko]]
+*** [[https://github.com/szagoruyko/cifar.torch][cifar.torch]]
+**** [[https://github.com/szagoruyko/cifar.torch][git repository]]
+**** [[http://torch.ch/blog/2015/07/30/cifar.html][blog]]
 ** Lua
 *** =__index= metamethod
     当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
@@ -760,7 +764,7 @@ lsof -i -n -P | grep -i listen
     : .
     : d
     : s
-
+*** [[http://www.newthinktank.com/2015/06/learn-lua-one-video/][one video tutorial for lua]]
 ** Git
 *** git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
