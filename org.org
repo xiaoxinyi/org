@@ -142,16 +142,18 @@ sigmoid and rectified linear units.
 *** TODO [[http://colah.github.io/][deep learning blog (colah)]]
     SCHEDULED: <2016-08-25 Thu>
 *** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
-*** Caffe Note
-**** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
-***** using caffe to extract features
-     #+BEGIN_SRC sh
-       find `pwd`/examples/images -type f -exec echo {} \; > examples/_temp/temp.txt
-       sed "s/$/ 0/" examples/_temp/temp.txt > examples/_temp/file_list.txt
-       cd $CAFFE
-       ./build/tools/extract_features models/bvlc_reference_caffenet/bvlc_reference examples/_temp/imagenet_val.prototxt example/_temp/feature fc7 10 lmdb GPU 0
-     #+END_SRC
-***** general command for extract feature using caffe
+*** backward
+**** [[https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html][backward gradient]]
+** Caffe Note
+*** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
+**** using caffe to extract features
+    #+BEGIN_SRC sh
+      find `pwd`/examples/images -type f -exec echo {} \; > examples/_temp/temp.txt
+      sed "s/$/ 0/" examples/_temp/temp.txt > examples/_temp/file_list.txt
+      cd $CAFFE
+      ./build/tools/extract_features models/bvlc_reference_caffenet/bvlc_reference examples/_temp/imagenet_val.prototxt example/_temp/feature fc7 10 lmdb GPU 0
+    #+END_SRC
+**** general command for extract feature using caffe
 #+BEGIN_SRC sh
   extract_features pretrained_net_param  feature_extraction_proto_file \
   extract_feature_blob_name1[,name2,...]  save_feature_dataset_name1[,name2,...] \
@@ -197,26 +199,26 @@ lmdb，因为lmdb的访问速度更快，还支持多进程同时读取。
 - 提取哪一层
     * 不要提取Softmax网络的最后一层(如AlexNet的fc8)，因为最后一层已经
       是分类任务的输出，作为特征的可推广性不够好
-***** read from lmdb
-     #+BEGIN_SRC python
-       import numpy as np
-       import caffe
-       import lmdb
-       from caffe.proto import caffe_pb2
+**** read from lmdb
+    #+BEGIN_SRC python
+      import numpy as np
+      import caffe
+      import lmdb
+      from caffe.proto import caffe_pb2
 
-       fea_lmdb = lmdb.open('featureA')
-       lmdb_txn = fea_lmdb.begin()
-       lmdb_cursor = txn.cursor()
-       features = []
+      fea_lmdb = lmdb.open('featureA')
+      lmdb_txn = fea_lmdb.begin()
+      lmdb_cursor = txn.cursor()
+      features = []
 
-       for key, value in lmdb_cursor:
-           datum = caffe_pb2.Datum()
-           datum.ParseFromString(value)
-           data = caffe.io.datum_to_array(datum)
-           features.append(data)
+      for key, value in lmdb_cursor:
+          datum = caffe_pb2.Datum()
+          datum.ParseFromString(value)
+          data = caffe.io.datum_to_array(datum)
+          features.append(data)
 
-     #+END_SRC
-***** image recognition using =cos= similarity measure
+    #+END_SRC
+**** image recognition using =cos= similarity measure
 #+BEGIN_SRC python
 
   import numpy as np
@@ -252,7 +254,7 @@ lmdb，因为lmdb的访问速度更快，还支持多进程同时读取。
           similarity[i, j] = 1 - spatial.distance.cosine(out[i], out[j])
 
 #+END_SRC
-***** =cos= similarity result
+**** =cos= similarity result
 - accuracy (true ture) : 53 / 55
 #+BEGIN_SRC python
 a = similarity[0:10, 0:10]
@@ -331,16 +333,6 @@ gcc -xc++ -E -v -
 #+BEGIN_SRC elisp
   (add-to-list achead:include-directories "/usr/include")
 #+END_SRC
-*** =org= mode
-**** move item up/down =M-up= =org-metaup=
-**** change all level to next level =M-shift-left=
-**** =C-x n s= (org-narrow-to-subtree)
-**** =C-x n w= (widen)
-**** literate programming in =org mode=
-***** TODO [[http://www.howardism.org/Technical/Emacs/literate-devops.html][literate programming howard abrams]]
-      SCHEDULED: <2016-09-13 Tue>
-***** TODO [[http://www.howardism.org/Technical/LP/introduction.html][introduction Howard Abrams]]
-      SCHEDULED: <2016-09-13 Tue>
 *** [[http://tuhdo.github.io/][tutorial]]
 *** etags
     #+BEGIN_SRC sh
@@ -360,6 +352,37 @@ gcc -xc++ -E -v -
         :config
         (require 'impatient-mode))
     #+END_SRC
+** =org= Mode Note
+*** move item up/down =M-up= =org-metaup=
+*** change all level to next level =M-shift-left=
+*** =C-x n s= (org-narrow-to-subtree)
+*** =C-x n w= (widen)
+*** literate programming in =org mode=
+**** TODO [[http://www.howardism.org/Technical/Emacs/literate-devops.html][literate programming howard abrams]]
+     SCHEDULED: <2016-09-13 Tue>
+**** TODO [[http://www.howardism.org/Technical/LP/introduction.html][introduction Howard Abrams]]
+     SCHEDULED: <2016-09-13 Tue>
+*** show utf-8 character =C-c C-x \=
+*** latex
+**** [[http://orgmode.org/worg/org-tutorials/org-latex-preview.html][latex configuration]]
+**** =C-c C-x C-l= latex to image
+**** latex =tangle=
+#+BEGIN_SRC latex :tangle example.tex
+  \documentclass{article}
+
+  \begin{document}
+
+  \[
+  e^{i\pi} = -1
+  \]
+
+  \[
+  \int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+  \]
+
+  \end{document}
+
+#+END_SRC
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -563,6 +586,11 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 lsof -iTCP -sTCP:LISTEN -n -P
 lsof -i -n -P | grep -i listen
 #+END_SRC
+*** brew
+    #+BEGIN_SRC sh :results output
+      brew info imagemagick
+    #+END_SRC
+
 
 ** Torch
 *** TODO [[https://github.com/torch/nn/blob/master/doc/training.md#stochasticgradientmodule-criterion][gradient in torch]]
@@ -605,8 +633,7 @@ lsof -i -n -P | grep -i listen
     SCHEDULED: <2016-09-12 Mon>
 *** [[http://jucor.github.io/torch-doc-template/tensor.html][torch tensor reference]]
 *** [[https://github.com/torch/torch7/wiki/Cheatsheet][torch cheatsheet]]
-*** TODO [[https://github.com/torch/tutorials][torch tutorial]]
-*** COMMENT torch install packages
+*** torch install packages
     #+BEGIN_SRC sh
       luarocks install torch-rocks install https://raw.github.com/andresy/mnist/master/rocks/mnist-scm-1.rockspec
     #+END_SRC
@@ -654,11 +681,134 @@ lsof -i -n -P | grep -i listen
          return model:cuda()
       end
     #+END_SRC
-*** resnet torch 
+*** TODO resnet torch 
+    SCHEDULED: <2016-09-19 Mon>
     - [[https://github.com/szagoruyko/wide-residual-networks][resnet git repository Sergey Zagoruyko]]
 *** [[https://github.com/szagoruyko/cifar.torch][cifar.torch]]
 **** [[https://github.com/szagoruyko/cifar.torch][git repository]]
 **** [[http://torch.ch/blog/2015/07/30/cifar.html][blog]]
+*** preprocess image data
+**** reference
+***** [[https://github.com/torch/tutorials/blob/master/2_supervised/1_data.lua][tutorial]]
+**** load data
+     #+BEGIN_SRC lua
+       ----------------------------------------------------------------------
+       print '==> loading dataset'
+
+       -- We load the dataset from disk, and re-arrange it to be compatible
+       -- with Torch's representation. Matlab uses a column-major representation,
+       -- Torch is row-major, so we just have to transpose the data.
+
+       -- Note: the data, in X, is 4-d: the 1st dim indexes the samples, the 2nd
+       -- dim indexes the color channels (RGB), and the last two dims index the
+       -- height and width of the samples.
+
+       loaded = torch.load(train_file,'ascii')
+       trainData = {
+          data = loaded.X:transpose(3,4),
+          labels = loaded.y[1],
+          size = function() return trsize end
+       }
+
+     #+END_SRC
+**** image size scale
+     #+BEGIN_SRC lua 
+       require 'image'
+       image_name = paths.basename('Goldfish3.jpg')
+       print(image_name)
+       im = image.load(image_name)
+       im = image.scale(im, 224, 224):double()
+       itorch.image(im)
+       im = torch.reshape(im, 1, 3, 224, 224)
+       itorch.image(im)
+       print(im:size())
+     #+END_SRC
+**** rescale and normalize the image globally
+     #+BEGIN_SRC lua
+       -- Rescales and normalizes the image
+       function preprocess(im, img_mean)
+         -- rescale the image
+         local im3 = image.scale(im,224,224,'bilinear')
+         -- subtract imagenet mean and divide by std
+         for i=1,3 do im3[i]:add(-img_mean.mean[i]):div(img_mean.std[i]) end
+         return im3
+       end
+
+       I = preprocess(im, net.transform):float()
+       itorch.image(I)
+     #+END_SRC
+**** colorspace RGB -> YUV
+     #+BEGIN_SRC lua
+       print '==> preprocessing data: colorspace RGB -> YUV'
+       for i = 1,trainData:size() do
+          trainData.data[i] = image.rgb2yuv(trainData.data[i])
+       end
+       for i = 1,testData:size() do
+          testData.data[i] = image.rgb2yuv(testData.data[i])
+       end
+     #+END_SRC
+**** normalize all three channel locally
+     #+BEGIN_SRC lua
+       -- Local normalization
+       print '==> preprocessing data: normalize all three channels locally'
+
+       -- Define the normalization neighborhood:
+       neighborhood = image.gaussian1D(13)
+
+       -- Define our local normalization operator (It is an actual nn module, 
+       -- which could be inserted into a trainable model):
+       normalization = nn.SpatialContrastiveNormalization(1, neighborhood, 1):float()
+
+       -- Normalize all channels locally:
+       for c in ipairs(channels) do
+          for i = 1,trainData:size() do
+             trainData.data[{ i,{c},{},{} }] = normalization:forward(trainData.data[{ i,{c},{},{} }])
+          end
+          for i = 1,testData:size() do
+             testData.data[{ i,{c},{},{} }] = normalization:forward(testData.data[{ i,{c},{},{} }])
+          end
+       end
+     #+END_SRC
+**** verify statistics
+     #+BEGIN_SRC lua
+       print '==> verify statistics'
+
+       -- It's always good practice to verify that data is properly
+       -- normalized.
+
+       for i,channel in ipairs(channels) do
+          trainMean = trainData.data[{ {},i }]:mean()
+          trainStd = trainData.data[{ {},i }]:std()
+
+          testMean = testData.data[{ {},i }]:mean()
+          testStd = testData.data[{ {},i }]:std()
+
+          print('training data, '..channel..'-channel, mean: ' .. trainMean)
+          print('training data, '..channel..'-channel, standard deviation: ' .. trainStd)
+
+          print('test data, '..channel..'-channel, mean: ' .. testMean)
+          print('test data, '..channel..'-channel, standard deviation: ' .. testStd)
+       end
+     #+END_SRC
+**** visualizing data
+     #+BEGIN_SRC lua
+       print '==> visualizing data'
+
+       -- Visualization is quite easy, using itorch.image().
+
+       if opt.visualize then
+          if itorch then
+          first256Samples_y = trainData.data[{ {1,256},1 }]
+          first256Samples_u = trainData.data[{ {1,256},2 }]
+          first256Samples_v = trainData.data[{ {1,256},3 }]
+          itorch.image(first256Samples_y)
+          itorch.image(first256Samples_u)
+          itorch.image(first256Samples_v)
+          else
+             print("For visualization, run this script in an itorch notebook")
+          end
+       end
+     #+END_SRC
 ** Lua
 *** =__index= metamethod
     当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
@@ -774,5 +924,14 @@ lsof -i -n -P | grep -i listen
 **** [[https://www.gitbook.com/book/chenxiaowei/cpp_concurrency_in_action/details][resource for book]]
 ** Alfred
 *** [[http://www.alfredworkflow.com/][workflow repository]]
- 
+\[
+e^{i\pi} = -1
+\]
+\[
+\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+\]
 
+\( \alpha - \beta \)
+
+\alpha = \beta
+#+END_LaTeX
