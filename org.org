@@ -185,10 +185,24 @@ sigmoid and rectified linear units.
 ******* Not zero-centered output
 ******* hint: what is the gradient when x < 0?
 ******* people like to initialize ReLU neurons with slightly positive biases (e.g. 0.01)
-****** summary
+****** Leaky ReLU  f(x) = max(0.01x, x)
 ******* Does not saturate 
 ******* Computationally efficient Converges much faster than sigmoid/tanh in practice! (e.g. 6x)
 ******* will not “die”.
+****** Parametric Rectifier (PReLU) f(x) = max(\alpha*x, x)
+******* backprop into \alpha (parameter)
+****** Exponential Linear Units (ELU)
+******* \[ \begin{cases} x \ \ if\ x > 0 \\ \alpha (exp(x) - 1) \ \ if\ x \leq 0 \end{cases} \]
+******* All benefits of ReLU
+******* Does not die
+******* Closer to zero mean outputs
+******* Computation requires exp()
+****** Maxout “Neuron” 
+******* \[ max(w_1^{T}x + b_1, w_2^{T}x + b_2) \]
+******* Does not have the basic form of dot product -> nonlinearity
+******* Generalizes ReLU and Leaky ReLU
+******* Linear Regime! Does not saturate! Does not die!
+******* Problem: doubles the number of parameters/neuron :(
 ***** preprocessing
 ***** weight initialization
 ***** regularization
@@ -438,6 +452,21 @@ gcc -xc++ -E -v -
   \end{document}
 
 #+END_SRC
+*** org-narrow-forward
+    #+BEGIN_SRC elisp
+      ;; org-narrow-forward
+      (defun zl/org-narrow-forward ()
+        "Move to the next subtree at same level, and narrow to it."
+        (interactive)
+        (widen)
+        (org-forward-heading-same-level 1)
+        (org-narrow-to-subtree))
+
+      (defun zl/set-org-keys ()
+          (local-set-key "\C-xnm" 'zl/org-narrow-forward))
+
+      (add-hook 'org-mode-hook 'zl/set-org-keys)
+    #+END_SRC
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
