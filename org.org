@@ -150,7 +150,55 @@ sigmoid and rectified linear units.
        \[ \sigma_{\Beta}^{2} \leftarrow \frac{1}{m} \sum_{i=1}^{m}(x_i - \mu_{\Beta})^2 \]  // mini-batch variance
        \[ \hat{x}_{i}  \leftarrow \frac{(x_i - \mu{}_{\Beta})^2}{\sqrt{\sigma_{\Beta}^2 + \epsilon }} \]  // normalize
        \[ y_i \leftarrow \gamma\hat{x}_i + \beta \]  // scale and shift
-       
+*** confusion matrix
+**** [[http://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/][tutorial]]
+*** why dropout layer 
+**** Dropout is a form of regularisation.[[https://www.quora.com/How-does-the-dropout-method-work-in-deep-learning][(quora)]]
+***** How does it work?
+      It essentially forces an artificial neural network to learn multiple
+      independent representations of the same data by alternately randomly
+      disabling neurons in the learning phase. 
+***** What is the effect of this?
+      The effect of this is that neurons are prevented from co-adapting too
+      much which makes overfitting less likely. 
+***** Why does this happen?
+      The reason that this works is comparable to why using the mean outputs
+      of many separately trained neural networks to reduces overfitting. 
+*** what we should care about in deep learning
+**** One time setup
+***** activation functions
+****** sigmod function
+******* Saturated neurons “kill” the gradients
+******* Sigmoid outputs are not zero-centered
+******* Consider what happens when the input to a neuron is always positive? What can we say about the gradients on w? Always all positive or all negative :(
+(this is also why you want zero-mean data!)
+******* exp() is a bit compute expensive
+****** tanh(x)
+******* Squashes numbers to range [-1,1]
+******* zero centered (nice)
+******* still kills gradients when saturated :(
+****** ReLU (Rectified Linear Unit)
+******* Does not saturate (in +region)
+******* Converges much faster than
+******* sigmoid/tanh in practice (e.g. 6x)
+******* Very computationally efficient
+******* Not zero-centered output
+******* hint: what is the gradient when x < 0?
+******* people like to initialize ReLU neurons with slightly positive biases (e.g. 0.01)
+****** summary
+******* Does not saturate 
+******* Computationally efficient Converges much faster than sigmoid/tanh in practice! (e.g. 6x)
+******* will not “die”.
+***** preprocessing
+***** weight initialization
+***** regularization
+***** gradient checking
+**** Training dynamics
+***** babysitting the learning process
+***** parameter updates
+***** hyperparameter optimization
+**** Evaluation
+***** model ensembles
 ** Caffe Note
 *** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 **** using caffe to extract features
@@ -815,6 +863,62 @@ lsof -i -n -P | grep -i listen
           end
        end
      #+END_SRC
+**** one method used for =cifar= dataset [[https://github.com/szagoruyko/cifar.torch/blob/master/provider.lua][(code)]] 
+     - RGB -> YUV
+     - normalize Y channel locally
+     - normalize U, V channel globally
+       #+BEGIN_SRC lua
+          -- preprocess trainSet
+           local normalization = nn.SpatialContrastiveNormalization(1, image.gaussian1D(7))
+           for i = 1,trainData:size() do
+              xlua.progress(i, trainData:size())
+              -- rgb -> yuv
+              local rgb = trainData.data[i]
+              local yuv = image.rgb2yuv(rgb)
+              -- normalize y locally:
+              yuv[1] = normalization(yuv[{{1}}])
+              trainData.data[i] = yuv
+           end
+           -- normalize u globally:
+           local mean_u = trainData.data:select(2,2):mean()
+           local std_u = trainData.data:select(2,2):std()
+           trainData.data:select(2,2):add(-mean_u)
+           trainData.data:select(2,2):div(std_u)
+           -- normalize v globally:
+           local mean_v = trainData.data:select(2,3):mean()
+           local std_v = trainData.data:select(2,3):std()
+           trainData.data:select(2,3):add(-mean_v)
+           trainData.data:select(2,3):div(std_v)
+       #+END_SRC
+*** Tensor note
+**** =Tensor:t()=
+     #+BEGIN_SRC emacs-lisp :results none
+       (setq org-babel-lua-command "lua5.1")
+     #+END_SRC
+
+
+     #+BEGIN_SRC lua :results output
+       torch = require('torch')
+
+       x = torch.Tensor(2,3):fill(1)
+
+       -- x is contiguous, so y points to the same thing
+       y = x:contiguous():fill(2)
+
+       print(x)
+       print(y)
+
+       -- x:t() is not contiguous, so z is a clone
+       z = x:t():contiguous():fill(3.14)
+
+       print(x)
+       print(z)
+     #+END_SRC
+
+     #+RESULTS:
+
+
+
 ** Lua
 *** =__index= metamethod
     当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
@@ -880,6 +984,8 @@ lsof -i -n -P | grep -i listen
     : value1
     : nil	新值2
     : 新值1	nil
+
+
 
     以上实例中表设置了元方法 =__newindex= ，在对新索引键（newkey）赋值时
     （mytable.newkey = "新值2"），会调用元方法，而不进行赋值。而如果对
