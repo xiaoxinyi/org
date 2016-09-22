@@ -205,14 +205,350 @@ sigmoid and rectified linear units.
 ******* Problem: doubles the number of parameters/neuron :(
 ***** preprocessing
 ***** weight initialization
+****** Small random numbers (gaussian with zero mean and 1e-2 standard deviation)
+       #+BEGIN_SRC python
+         W = 0.01 * np.random.randn(D, H)
+       #+END_SRC
+******* Works ~okay for small networks, but can lead to non-homogeneous distributions of activations across the layers of a network.
+******* 10-layer net with 500 neurons on each layer, using tanh non-linearities
+******** All activations become zero!
+******** Almost all neurons completely saturated, either -1 and 1. Gradients will be all zero.
+****** Xavier initialization [Glorot et al., 2010]
+       #+BEGIN_SRC python
+         W = np.random.randn(fan_in, fan_out) / np.sqrt(fan_in)
+       #+END_SRC
+******* Reasonable initialization
+******* but when using the ReLU nonlinearity it breaks.
+****** He et al., 2015
+       #+BEGIN_SRC python
+         W = np.random.randn(fan_in, fan_out) / np.sqrt(fan_in / 2)
+       #+END_SRC
+****** Proper initialization is an active area of research
+******* Understanding the difficulty of training deep feedforward neural networks by Glorot and Bengio, 2010 
+******* Exact solutions to the nonlinear dynamics of learning in deep linear neural networks by Saxe et al, 2013
+******* Random walk initialization for training very deep feedforward networks by Sussillo and Abbott, 2014
+******* Delving deep into rectifiers: Surpassing human-level performance on ImageNet classification by He et al., 2015
+******* Data-dependent Initializations of Convolutional Neural Networks by Krähenbühl et al., 2015
+******* All you need is a good init, Mishkin and Matas, 2015
+***** layer tricks
+****** Batch Normalization
+******* consider a batch of activations at some layer. To make each dimension unit gaussian, apply:
+        \[ \hat{x}_{(k)}} = \frac{x^{(k)} - E[x^{(k)}]}{\sqrt{Var[x^{(k)}]}} \]
+******* his is a vanilla differentiable function...
+******* compute the empirical mean and variance independently for each dimension.
+******* Normalize
+******* Usually inserted after Fully Connected / (or Convolutional, as we’ll see soon) layers, and before nonlinearity.
+******* Problem: do we necessarily want a unit gaussian input to a tanh layer?
+******* advantages
+******** improves gradient flow through the network
+******** Allows higher learning rates
+******** Reduces the strong dependence on initialization
+******** Acts as a form of regularization in a funny way, and slightly reduces the need for dropout, maybe
+******* algorithm
+        \[ y_i = BN_{r, \beta}(x_i) \] 
+        \[ \mu_{}_{}_{}_\Beta \leftarrow \frac{1}{m}\sum_{i-1}^m x_i \]  // mini-batch mean
+        \[ \sigma_{\Beta}^{2} \leftarrow \frac{1}{m} \sum_{i=1}^{m}(x_i - \mu_{\Beta})^2 \]  // mini-batch variance
+        \[ \hat{x}_{i}  \leftarrow \frac{(x_i - \mu{}_{\Beta})^2}{\sqrt{\sigma_{\Beta}^2 + \epsilon }} \]  // normalize
+        \[ y_i \leftarrow \gamma\hat{x}_i + \beta \]  // scale and shift
+******* Note: at test time BatchNorm layer functions differently:
+        - The mean/std are not computed based on the batch. Instead, a
+          single fixed empirical mean of activations during training
+          is used.
+        - (e.g. can be estimated during training with running averages)
 ***** regularization
+****** Dropout
+       - randomly set some neurons to zero in the forward pass
+         #+BEGIN_SRC python
+           p = 0.5  # probability of keeping a unit active. high = less dropout
+
+           def train_step(X):
+               """ X contains the data """
+
+               # forward pass for example 3-layer neural network
+               H1 = np.maximum(0, np.dot(W1, X) + b1)
+               U1 = np.random.rand(*H1.shape) < p  # first dropout mask
+               H1 *= U1  # drop!
+               H2 = np.maximum(0, np.dot(W2, H1) + b2)
+               U2 = np.random.rand(*H2.shape) < p  # second dropout mask
+               H2 *= U2  # drop!
+               out = np.dot(W3, H2) + b3
+
+               # backward pass: compute gradients... (not shown)
+               # perform paramter update... (not shown)
+         #+END_SRC
+******* How could this possibly be a good idea?
+        - Forces the network to have a redundant representation
+        - Dropout is training a large ensemble of models (that share parameters).
+        - Each binary mask is one model, gets trained on only ~one
+          datapoint.
+******* At test time...
+        - Ideally: want to integrate out all the noise
+        - Monte Carlo approximation: do many forward passes with
+          different dropout masks, average all predictioins
+        - Can in fact do this with a single forward pass! Leave all
+          input neurons turned on (no dropout).
+          + during test : a = W0*x + W1*y
+          + during train:
+            E[a] = 1/4*(W0*0 + W1*0 + W0*0 + W1*y + W0*x
+            + W1*0 + W0*x + W1*y) = 1/4*(2W0*x + 2W1*y) = 1/2(W0*x +
+              W1*y)
+          + with p = 0.5, using all inputs in the forward pass would
+            inflate the activations by 2x from what the network was
+            "used to" during training! => Have to compensate by
+            scaling the activations back down by 1/2.
+          + At test time all neurons are active always => output at
+            test time = expected output at training time
+            #+BEGIN_SRC python
+              def predict(X):
+                  # ensembled forward pass
+                  H1 = np.maximum(0, np.dot(W1, X) + b1) * p  # NOTE: scale the activations
+                  H2 = np.maximum(0, np.dot(W2, H1) + b2) * p  # NOTE: scale the activations
+                  out = np.dot(W3, H2) + b3
+            #+END_SRC
+            
+            #+BEGIN_SRC python
+              p = 0.5  # probability of keeping a unit active. higher = less dropout
+
+              def train_step(X):
+                  # forward pass for example 3-layer neural network
+                  H1 = np.maximum(0, np.dot(W1, X) + b1)
+                  U1 = (np.random.rand(*H1.shape) < p) / p  # first dropout mask. Notice /p!
+                  H1 *= U1  # drop!
+                  H2 = np.maximum(0, np.dot(W22, H1) + b2)
+                  U2 = (np.random.rand(*H2.shape) < p) / p  # second dropout mask. Notice /p!
+                  H2 *= U2  # drop!
+                  out = np.dot(W3, H2) + b3
+
+
+
+              def predict(X):
+                  # ensembled forward pass
+                  H1 = np.maximum(0, np.dot(W1, X) + b1)  # no scaling necessary
+                  H2 = np.maximum(0, np.dot(W2, H1) + b2)
+                  out = np.dot(W3, H2) + b3
+            #+END_SRC
+
 ***** gradient checking
 **** Training dynamics
 ***** babysitting the learning process
+****** Double check that the loss is reasonable
+       #+BEGIN_SRC python
+         import numpy as np
+
+
+         def init_two_layer_model(input_size, hidden_size, output_size):
+             # initialize a model
+             model = {}
+             model['W1'] = 0.0001 * np.random.randn(input_size, hidden_size)
+             model['b1'] = np.zeros(hidden_size)
+             model['W2'] = 0.0001 * np.random.randn(hidden_size, output_size)
+             model['b2'] = np.zeros(output_size)
+             return model
+
+
+         def two_layer_net(X_train, model, y_train, r):
+             ''' returns the loss and the gradient for all parameters '''
+             pass
+
+
+         model = init_two_layer_model(32*32*3, 50, 10)  # input_size, hidden_size, number of classes
+         loss, grad = two_layer_net(X_train, model, y_train, 0.0)  # diable regularization
+
+         # loss 2.3026121617 loss ~2.3 'correct' for 10 classes
+
+
+         model = init_two_layer_model(32*32*3, 50, 10)  # input_size, hidden_size, number of classes
+         loss, grad = two_layer_net(X_train, model, y_train, 1e3)  # crank up regularization
+
+         # 3.06859716482 loss went up, good (sanity check)
+
+       #+END_SRC
+****** Make sure that you can overfit very small portion of the training data
+       #+BEGIN_SRC python
+         model = init_two_lay_model(32*32*3, 50, 10)
+         trainer = ClassifierTrainer()
+         x_tiny = x_train[:20]  # take 20 examples
+         y_tiny = y_train[:20]
+         best_model, stats = trainer.train(x_tiny, y_tiny,
+                                           model, two_layer_net,
+                                           update='sgd', learning_rate_decay=1,
+                                           sample_batches=False,
+                                           learning_rate=1e-3, verbose=True)
+       #+END_SRC
+       - take the first 20 examples from CIFAR-10
+       - turn off regularization (reg = 0.0)
+       - use simple vanilla 'sgd'
+       - very small loss, train accuracy 1.00, nice!
+****** I like to start with small regularization and find learning rate that makes the loss go down.
+       #+BEGIN_SRC python
+         model = init_two_lay_model(32*32*3, 50, 10)
+         trainer = ClassifierTrainer()
+         x_tiny = x_train[:20]  # take 20 examples
+         y_tiny = y_train[:20]
+         best_model, stats = trainer.train(x_tiny, y_tiny,
+                                           model, two_layer_net,
+                                           update='sgd', learning_rate_decay=1,
+                                           sample_batches=False,
+                                           learning_rate=1e-6, verbose=True)
+
+         # Loss barely changing: Learning rate is probably too low
+         # Notice train/val accuracy goes up
+
+       #+END_SRC
+****** loss not going down: learning rate too low
+****** loss exploding: learning rate too high
+****** cost: NaN almost always means high learning rate...
+****** Rough range for learning rate we should be cross-validating is somewhere [1e-3 ... 1e-5]
 ***** parameter updates
+****** Mini-batch SGD
+******* loop:
+        1. Sample a batch of data
+        2. Forward prop it through the graph, get loss
+        3. Backprop to calculate the gradients
+        4. Update the parameters using the gradient
+           #+BEGIN_SRC python
+             while True:
+                 data_batch = dataset.sample_data_batch()
+                 loss = network.forward(data_batch)
+                 dx = network.backward()
+                 x += - learning_rate * dx
+           #+END_SRC
+****** Momentum update
+       #+BEGIN_SRC python
+         # Gradient descent update
+         x += - learning_rate * dx
+
+         # Momentum update
+         v = mu * v - learning_rate * dx  # integrate velocity
+         x += v  # integrate position
+
+       #+END_SRC
+       - Physical intepretation as ball rolling down the loss
+         function + friction (\mu coefficient)
+       - \mu = usually ~ 0.5, 0.9, or 0.99 (sometimes anneled over time,
+         e.g. from 0.5 -> 0.99)
+       - Allows a velocity to build up along shallow directions
+       - Velocity becomes damped in steep direction due to quickly
+         changing sign
+****** Nesterov Momentum update
+       v_t = \mu v_{t-1} - \epsilon \nabla f(\theta_{t-1} + \mu v_{t-1})
+
+       \theta_t = \theta_{t-1} + v_t 
+       
+       \theta_{t-1} + \mu v_{t-1} Slightly inconvenient usually we have : \theta_{t-1}
+       \nabla f(\theta_{t-1})  
+       - variable transform and rearranging saves the day: \phi_{t-1} = \theta_{t-1} + \mu v_{t-1}
+       - replace all \theta  with \phi , rearrange and obtain:
+
+         v_t = \mu v_{t-1} - \epsilon \nabla f(\phi_{t-1})
+
+       \phi_t = \phi_{t-1} - \mu v_{t-1} + (1 + \mu)v_t 
+       #+BEGIN_SRC python
+         # Nesterov momentum update rewrite
+         v_prev = v
+         v = mu * v - learning_rate * dx
+         x += -mu * v_prev + (1 + mu) * v
+       #+END_SRC
+****** AdaGrad update
+       - Added element-wise scaling of the gradient based on the
+         historical sum of squares in each dimension
+         #+BEGIN_SRC python
+           # Adagrad update
+
+           cache += dx**2
+           x += - learning_rate * dx / (np.sqrt(cache) + 1e-7)
+         #+END_SRC
+****** RMSProp update
+       #+BEGIN_SRC python
+         # Adagrad update
+         cache += decay_rate * cache + (1 - decay_rate) * dx**2
+         x += - learning_rate * dx / (np.sqrt(cache) + 1e-7)
+       #+END_SRC
+****** Adam update
+       #+BEGIN_SRC python
+         # Adam
+         m = beta1*m + (1 - beta1)*dx  # update first moment momentum
+         v = beta2*v + (1 - beta2)*(dx**2)  # update second moment RMSProp-like
+
+         x += - learning_rate * m / (np.sqrt(v) + 1e-7)
+       #+END_SRC
+
+       #+BEGIN_SRC python
+         # Adam
+         m, v =  # ... initialize caches to zeros
+         for t in xrange(1, big_number):
+             dx =  # ... evaluate gradient
+             m = beta1 * m + (1 - beta1) * dx  # update first moment
+             v = beta2 * v + (1 - beta2) * (dx**2)  # update second moment
+             mb = m / (1 - beta1**t)  # correct bias
+             vb = v / (1 - beta2**t)  # correct bias
+             x += - learning_rate * mb / (np.sqrt(vb) + 1e-7)
+       #+END_SRC
+       - The biaas correction compensates for the fact that m, v are
+         initialize at zero and need some time to "warm up".
+       - bias correction only relevant in first few iteration when t
+         is small
+****** learning rate as a hyperparameter => learning rate decay over time! 
+       - step decay: e.g. decay learning rate by half every few epochs
+       - exponential decay: \[ \alpha = \alpha_0 e^{-kt }\]
+       - 1/t decay: \[ \alpha = \alpha_0 / (1 + kt) \]
+****** Adam is a good default choice in most cases
 ***** hyperparameter optimization
+****** network architecture
+****** learning rate, its decay schedule, update type
+****** regularization (L2/Droout strength)
+****** monitor and visualize the loss curve
+****** monitor and visualize the accuracy
+       - big gap = overfitting => increase regularization strength?
+       - no gap => increase model capacity?
+****** Track the ratio of weight updates / weight magnitudes:
+       #+BEGIN_SRC python
+         # assume parameter vector W and its gradient vector dW
+         param_scale = np.linalg.norm(W.ravel())
+         update = -learning_rate*dW  # simple SGD update
+         update_scale = np.linalg.norm(update.ravel())
+         W += update  # the actual update
+         print update_scale / param_scale  # want -1e-3
+       #+END_SRC
+       - atio between the values and updates: ~ 0.0002 / 0.02 = 0.01 (about okay)
+       - want this to be somewhere around 0.001 or so
+****** Cross-validation strategy
+******* I like to do coarse -> fine cross-validation in stages
+        - First stage: only a few epochs to get rough idea of what params work
+        - Second stage: longer running time, finer search ... (repeat
+          as necessary)
+          #+BEGIN_SRC python
+            max_count = 100
+
+            # coarse search
+            for count in xrange(max_count):
+                # note it's best to optimize in log space!
+                reg = 10**uniform(-5, 5)
+                lr = 10**uniform(-3, -6)
+
+            # fine search
+            for count in xrange(max_count):
+                reg = 10**uniform(-4, 0)
+                lr = 10**uniform(-3, -4)
+          #+END_SRC
+
 **** Evaluation
 ***** model ensembles
+      1. Train multiple independent models
+      2. At test time average their results (Enjoy 2% extra performace)
+      3. Fun Tips/Tricks:
+         - can also get a small boost from averaging multiple model
+           checkpoints of a single model.
+         - keep track of (and use at test time) a running average
+           parameter vector:
+           #+BEGIN_SRC python
+             while True:
+                 data_batch = dataset.sample_data_batch()
+                 loss = network.forward(data_batch)
+                 dx = network.backward()
+                 x += - learning_rate * dx
+                 x_test = 0.9995*x_test + 0.005*x  # use for test set
+           #+END_SRC
 ** Caffe Note
 *** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 **** using caffe to extract features
@@ -269,7 +605,7 @@ lmdb，因为lmdb的访问速度更快，还支持多进程同时读取。
     * 不要提取Softmax网络的最后一层(如AlexNet的fc8)，因为最后一层已经
       是分类任务的输出，作为特征的可推广性不够好
 **** read from lmdb
-    #+BEGIN_SRC python
+    #+BEGIN_SRC pytho
       import numpy as np
       import caffe
       import lmdb
@@ -277,7 +613,7 @@ lmdb，因为lmdb的访问速度更快，还支持多进程同时读取。
 
       fea_lmdb = lmdb.open('featureA')
       lmdb_txn = fea_lmdb.begin()
-      lmdb_cursor = txn.cursor()
+      lmdb_cursor = lmdb_txn.cursor()
       features = []
 
       for key, value in lmdb_cursor:
@@ -298,7 +634,12 @@ lmdb，因为lmdb的访问速度更快，还支持多进程同时读取。
 
 
   # 3 steps to read form lmdb
-  fea_lmdb = lmdb.open('/root/caffe/examples/_temp/featureA')
+  fea_lmdb = lmdb.ope
+
+
+
+
+n('/root/caffe/examples/_temp/featureA')
   lmdb_txn = fea_lmdb.begin()
   lmdb_cursor = lmdb_txn.cursor()
   features = []
@@ -945,8 +1286,24 @@ lsof -i -n -P | grep -i listen
      #+END_SRC
 
      #+RESULTS:
+**** =index(dim, index)=
+     #+BEGIN_SRC lua :results output :interpreter /usr/local/bin/lua
+       -- [[
+       Returns a new Tensor which indexes the given tensor along dimension dim and using the entries in torch.LongTensor index. The returned tensor has the same number of dimensions as the original tensor. The returned tensor does not use the same storage as the original tensor.
+       ]]
 
+       torch = require 'torch'
+       x = torch.rand(5, 5)
+       print(x)
 
+       y = x:index(1, torch.LongTensor{3, 1})
+       print(y)
+
+       y:fill(1)
+
+       print(y)
+       print(x)
+     #+END_SRC
 
 ** Lua
 *** =__index= metamethod
@@ -993,8 +1350,8 @@ lsof -i -n -P | grep -i listen
        果 =__index= 方法是一个表，则重复1、2、3；如果 =__index= 方法是一个函数，
        则返回该函数的返回值。
 *** =__newindex= 
-    __newindex 元方法用来对表更新，__index则用来对表访问 。
-    当你给表的一个缺少的索引赋值，解释器就会查找__newindex 元方法：如
+    =__newindex= 元方法用来对表更新 =__newindex= 则用来对表访问 。
+    当你给表的一个缺少的索引赋值，解释器就会查找 =__newindex= 元方法：如
     果存在则调用这个函数而不进行赋值操作。 
     #+BEGIN_SRC lua :results output
       mymetatable = {}
@@ -1013,7 +1370,6 @@ lsof -i -n -P | grep -i listen
     : value1
     : nil	新值2
     : 新值1	nil
-
 
 
     以上实例中表设置了元方法 =__newindex= ，在对新索引键（newkey）赋值时
