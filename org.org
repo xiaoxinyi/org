@@ -65,7 +65,13 @@ sudo apt-get update && sudo apt-get install nvidia-355
 Hit =prefix + I= to fetch the plugin and source it.
 *** move panel to a new window
     =prefix + : break-panel=
+** Learning resource
+*** [[https://github.com/sindresorhus/awesome][awesome series git]]
 ** Deep learning Note
+*** deep learning resource
+**** [[https://github.com/ChristosChristofidis/awesome-deep-learning][awesome deep learning git]]
+**** [[https://github.com/jbhuang0604/awesome-computer-vision][awesome computer vision git]]
+**** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
 *** DONE [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
@@ -141,7 +147,6 @@ problem, as well as highlights the difference between the behavior of
 sigmoid and rectified linear units. 
 *** TODO [[http://colah.github.io/][deep learning blog (colah)]]
     SCHEDULED: <2016-08-25 Thu>
-*** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
 *** backward
 **** [[https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html][backward gradient for batch normalization]]
 
@@ -1260,6 +1265,8 @@ lsof -i -n -P | grep -i listen
            trainData.data:select(2,3):add(-mean_v)
            trainData.data:select(2,3):div(std_v)
        #+END_SRC
+**** tools
+***** [[http://www.imagemagick.org/script/convert.php][convert tool]]
 *** Tensor note
 **** =Tensor:t()=
      #+BEGIN_SRC emacs-lisp :results none
