@@ -2,7 +2,8 @@
 ** Paper Reading
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/D6/D6FD20F2-226C-49D9-B4DB-FF1AF8C9C987.pdf][Caffe: Convolutional Architecture for Fast Feature Embedding]]
     SCHEDULED: <2016-08-24 Wed>
-*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]] [[http://arxiv.org/abs/1502.03167][{arxiv}]] 
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]][[[http://arxiv.org/abs/1502.03167][arxiv]]] 
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/27/27F7C527-407C-4EF2-A337-350046B64813.pdf][CNN Features off-the-shelf: an Astounding Baseline for Recognition]] [[[http://arxiv.org/pdf/1403.6382v3.pdf][arxiv]]]
 ** Linux Note
 *** sed
 #+BEGIN_SRC sh
@@ -209,6 +210,39 @@ sigmoid and rectified linear units.
 ******* Linear Regime! Does not saturate! Does not die!
 ******* Problem: doubles the number of parameters/neuron :(
 ***** preprocessing
+****** Data Augmentation
+******* Change the pixels without changing the label Train on transformed data VERY widely used
+******* Horizontal flips
+******* Random crops/scales
+******** Training: sample random crops / scales ResNet:
+         1. Pick random L in range [256, 480]
+         2. Resize training image, short side = L
+         3. Sample random 224 x 224 patch
+******** Testing: average a fixed set of crops
+         1. Resize image at 5 scales: {224, 256, 384, 480, 640}
+         2. For each size, use 10 224 x 224 crops: 4 corners +
+            center, + flips
+******** Color jitter
+********* Simple
+          1. Randomly jitter contrast
+********* Complex
+          1. Apply PCA to all [R, G, B] pixels in training set
+          2. Sample a “color offset” along principal component directions
+          3. Add offset to all pixels of a training image
+******** Get creative! 
+********* Random mix/combinations of :
+          - translation
+          - rotation
+          - stretching
+          - shearing
+          - lens distortions, ... (go crazy)
+******* Summary 
+        - Simple to implement, use it
+        - Especially useful for small datasets
+        - Fits into framework of noise / marginalization
+******** A general theme: 
+         - Training: Add random noise
+         - pTesting: Marginalize over the noise
 ***** weight initialization
 ****** Small random numbers (gaussian with zero mean and 1e-2 standard deviation)
        #+BEGIN_SRC python
@@ -239,10 +273,10 @@ sigmoid and rectified linear units.
 ****** Batch Normalization
 ******* consider a batch of activations at some layer. To make each dimension unit gaussian, apply:
         \[ \hat{x}_{(k)}} = \frac{x^{(k)} - E[x^{(k)}]}{\sqrt{Var[x^{(k)}]}} \]
-******* his is a vanilla differentiable function...
+******* this is a vanilla differentiable function...
 ******* compute the empirical mean and variance independently for each dimension.
 ******* Normalize
-******* Usually inserted after Fully Connected / (or Convolutional, as we’ll see soon) layers, and before nonlinearity.
+******* Usually inserted after Fully Connected / (or Convolutional) layers, and before nonlinearity.
 ******* Problem: do we necessarily want a unit gaussian input to a tanh layer?
 ******* advantages
 ******** improves gradient flow through the network
@@ -554,6 +588,83 @@ sigmoid and rectified linear units.
                  x += - learning_rate * dx
                  x_test = 0.9995*x_test + 0.005*x  # use for test set
            #+END_SRC
+*** CNN Note
+**** Case Study
+***** ResNet
+      - Batch Normalization after every CONV layer
+      - Xavier/2 initialization from He et al.
+      - SGD + Momentum (0.9)
+      - Learning rate: 0.1, divided by 10 when validation error plateaus Mini-batch size 256
+      - Weight decay of 1e-5 No dropout used
+      - 2-3 weeks of training on 8 GPU machine
+      - at runtime: faster than a VGGNet! (even though it has 8x more layers)
+**** cnn summary
+     - ConvNets stack CONV,POOL,FC layers
+     - - Trend towards smaller filters and deeper architectures
+     - Trend towards getting rid of POOL/FC layers (just CONV) -
+       Typical architectures look like  [(CONV-RELU)*N-POOL?]*M-(FC-RELU)*K,SOFTMAX
+     - where N is usually up to ~5, M is large, 0 <= K <= 2. but
+       recent advances such as ResNet/GoogLeNet challenge this paradigmp
+*** Deep learning frameworks
+**** [[/Users/zhangli/Documents/Library.papers3/Files/05/05D0A096-FABE-4247-99AB-F567BFFFBA3A.pptx][comparison]]
+**** recommendation
+     - Feature extraction / finetuning existing models: Use Caffe
+     - Complex uses of pretrained models: Use Lasagne or Torch
+     - Write your own layers: Use Torch
+     - Crazy RNNs: Use Theano or Tensorflow
+     - Huge model, need model parallelism: Use TensorFlow
+*** transfer learning
+**** [[http://cs231n.github.io/transfer-learning/][tutorial]]
+**** ConvNet as fixed feature extractor
+     - It is important for performance that these codes are ReLUd
+      (i.e. thresholded at zero) if they were also thresholded during
+      the training of the ConvNet on ImageNet (as is usually the
+      case). Once you extract the 4096-D codes for all images, train
+      a linear classifier (e.g. Linear SVM or Softmax classifier) for
+      the new dataset.
+**** Fine-tuning the ConvNet 
+     - This is motivated by the observation that the earlier features
+       of a ConvNet contain more generic features (e.g. edge detectors
+       or color blob detectors) that should be useful to many tasks,
+       but later layers of the ConvNet becomes progressively more
+       specific to the details of the classes contained in the
+       original dataset.
+     - Keeping in mind that ConvNet features are more generic in early
+       layers and more original-dataset-specific in later layers, here
+       are some common rules of thumb for navigating the 4 major
+       scenarios: 
+       1. New dataset is small and similar to original dataset. Since
+          the data is small, it is not a good idea to fine-tune the
+          ConvNet due to overfitting concerns. Since the data is
+          similar to the original data, we expect higher-level
+          features in the ConvNet to be relevant to this dataset as
+          well. Hence, the best idea might be to train a linear
+          classifier on the CNN codes.
+       2. New dataset is large and similar to the original
+          dataset. Since we have more data, we can have more
+          confidence that we won’t overfit if we were to try to
+          fine-tune through the full network.
+       3. New dataset is small but very different from the original
+          dataset. Since the data is small, it is likely best to only
+          train a linear classifier. Since the dataset is very
+          different, it might not be best to train the classifier form
+          the top of the network, which contains more dataset-specific
+          features. Instead, it might work better to train the SVM
+          classifier from activations somewhere earlier in the
+          network.
+       4. New dataset is large and very different from the original
+          dataset. Since the dataset is very large, we may expect that
+          we can afford to train a ConvNet from scratch. However, in
+          practice it is very often still beneficial to initialize
+          with weights from a pretrained model. In this case, we would
+          have enough data and confidence to fine-tune through the
+          entire network. 
+**** reference
+***** [[/Users/zhangli/Documents/Library.papers3/Files/27/27F7C527-407C-4EF2-A337-350046B64813.pdf][CNN Features off-the-shelf: an Astounding Baseline for Recognition]] [[[http://arxiv.org/pdf/1403.6382v3.pdf][arxiv]]]
+*** object detection
+**** tutorial
+***** TODO [[http://pjreddie.com/darknet/yolo/][yolo]]
+      SCHEDULED: <2016-09-27 Tue>
 ** Caffe Note
 *** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 **** using caffe to extract features
@@ -1420,7 +1531,8 @@ lsof -i -n -P | grep -i listen
     : s
 *** [[http://www.newthinktank.com/2015/06/learn-lua-one-video/][one video tutorial for lua]]
 ** Git
-*** git stash
+*** [[https://www.quora.com/What-is-the-best-Git-cheat-sheet][git cheatsheet]]
+*** Git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
 ** C++
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
