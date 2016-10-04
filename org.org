@@ -1,3 +1,4 @@
+
 * Tutorial
 ** Paper Reading
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/D6/D6FD20F2-226C-49D9-B4DB-FF1AF8C9C987.pdf][Caffe: Convolutional Architecture for Fast Feature Embedding]]
@@ -73,6 +74,8 @@ Hit =prefix + I= to fetch the plugin and source it.
 **** [[https://github.com/ChristosChristofidis/awesome-deep-learning][awesome deep learning git]]
 **** [[https://github.com/jbhuang0604/awesome-computer-vision][awesome computer vision git]]
 **** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
+**** TODO [[https://www.youtube.com/playlist?list=PLrAXtmErZgOfMuxkACrYnD2fTgbzk2THW][Deep Learning School 2016]]
+     SCHEDULED: <2016-10-04 Tue>
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
 *** DONE [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
@@ -997,6 +1000,10 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5
 #+END_SRC
 *** docker swarm
     - [[http://blog.arungupta.me/clustering-docker-swarm-techtip85/][tutorial]]
+*** rm all exited containers
+    #+BEGIN_SRC sh
+      docker ps -a | grep Exited | cut -d ' ' -f 1 | xargs docker rm
+    #+END_SRC
 ** Proxy
 *** proxychains
 #+BEGIN_SRC sh
@@ -1166,8 +1173,6 @@ lsof -i -n -P | grep -i listen
      #+END_SRC
 **** TODO =fblualib= [[https://github.com/facebook/fblualib][git repository]]
      SCHEDULED: <2016-09-11 Sun>
-*** TODO [[https://github.com/facebook/fb.resnet.torch/tree/master/pretrained][fb.resnet.torch]]
-    SCHEDULED: <2016-09-11 Sun>
 *** [[https://github.com/torch/nngraph][ =nngraph= tutorial]]
 *** TODO [[https://github.com/torch/demos][torch demos and tutorial]]
     SCHEDULED: <2016-09-12 Mon>
@@ -1223,7 +1228,9 @@ lsof -i -n -P | grep -i listen
     #+END_SRC
 *** TODO resnet torch 
     SCHEDULED: <2016-09-19 Mon>
-    - [[https://github.com/szagoruyko/wide-residual-networks][resnet git repository Sergey Zagoruyko]]
+**** [[https://github.com/szagoruyko/wide-residual-networks][resnet git repository Sergey Zagoruyko]]
+**** TODO [[https://github.com/facebook/fb.resnet.torch/tree/master/pretrained][fb.resnet.torch]]
+     SCHEDULED: <2016-09-11 Sun>
 *** [[https://github.com/szagoruyko/cifar.torch][cifar.torch]]
 **** [[https://github.com/szagoruyko/cifar.torch][git repository]]
 **** [[http://torch.ch/blog/2015/07/30/cifar.html][blog]]
@@ -1542,3 +1549,6 @@ lsof -i -n -P | grep -i listen
 *** [[http://www.alfredworkflow.com/][workflow repository]]
 ** Latex
 *** [[http://latex.wikia.com/wiki/List_of_LaTeX_symbols][reference for symbol]]
+** VPN
+*** tutorial
+**** [[https://www.digitalocean.com/community/tutorials/how-to-set-up-an-openvpn-server-on-ubuntu-16-04][openvpn on ubuntu 16.04]]
