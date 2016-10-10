@@ -58,6 +58,8 @@ sudo apt-get update && sudo apt-get install nvidia-355
     objdump -tT libName.so | grep symbol
     #+END_SRC
 *** [[http://blog.csdn.net/wooin/article/details/580679][ =ldconfig= ]]
+*** kill
+**** [[http://www.thegeekstuff.com/2009/12/4-ways-to-kill-a-process-kill-killall-pkill-xkill/][documentation]]
 ** Tmux Note
 *** =tmux= plugin installation
     Add plugin to the list of TPM plugins in =.tmux.conf=:
@@ -76,6 +78,7 @@ Hit =prefix + I= to fetch the plugin and source it.
 **** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
 **** TODO [[https://www.youtube.com/playlist?list=PLrAXtmErZgOfMuxkACrYnD2fTgbzk2THW][Deep Learning School 2016]]
      SCHEDULED: <2016-10-04 Tue>
+**** [[http://mp.weixin.qq.com/s?__biz=MjM5NDE4MTc2OA==&mid=2447696429&idx=1&sn=ceb6a5faf7c58fb814894f84c01e979d&mpshare=1&scene=1&srcid=1009zhC5J9YV0EhlGHtBISM2#rd][awesome series for machine learning]]
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
 *** DONE [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
@@ -668,6 +671,10 @@ sigmoid and rectified linear units.
 **** tutorial
 ***** TODO [[http://pjreddie.com/darknet/yolo/][yolo]]
       SCHEDULED: <2016-09-27 Tue>
+****** references
+******* [[/Users/zhangli/Documents/Library.papers3/Files/C0/C0EBD2D7-126A-4290-8AB6-AAA516E5A5DA.pdf][You Only Look Once: Unified, Real-Time Object Detection]] [[https://arxiv.org/pdf/1506.02640v5.pdf][(arxiv)]]
+*** imbalance data for classification
+**** [[https://www.quora.com/In-classification-how-do-you-handle-an-unbalanced-training-set][quora answers]]
 ** Caffe Note
 *** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 **** using caffe to extract features
@@ -1003,6 +1010,19 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5
 *** rm all exited containers
     #+BEGIN_SRC sh
       docker ps -a | grep Exited | cut -d ' ' -f 1 | xargs docker rm
+    #+END_SRC
+*** save and load image
+    #+BEGIN_SRC sh
+      # Get image id by doing:
+      sudo docker images
+
+      # Say you have image with id "matrix-data"
+
+      # Save image with id:
+      sudo docker save -o /home/matrix/matrix-data.tar matrix-data
+
+      # Copy image from path to any host Now import to your local docker using :
+      sudo docker load -i <path to copied image file>
     #+END_SRC
 ** Proxy
 *** proxychains
@@ -1461,12 +1481,10 @@ lsof -i -n -P | grep -i listen
         end
       })
 
-      print('hello world')
       print(mytable.key1,mytable.key2)
     #+END_SRC
 
     #+RESULTS:
-    : hello world
     : value1	metatablevalue
 
     1. 在表中查找，如果找到，返回该元素，找不到则继续
