@@ -2,7 +2,8 @@
 ** Paper Reading
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/D6/D6FD20F2-226C-49D9-B4DB-FF1AF8C9C987.pdf][Caffe: Convolutional Architecture for Fast Feature Embedding]]
     SCHEDULED: <2016-08-24 Wed>
-*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]] [[http://arxiv.org/abs/1502.03167][{arxiv}]] 
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]][[[http://arxiv.org/abs/1502.03167][arxiv]]] 
+*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/27/27F7C527-407C-4EF2-A337-350046B64813.pdf][CNN Features off-the-shelf: an Astounding Baseline for Recognition]] [[[http://arxiv.org/pdf/1403.6382v3.pdf][arxiv]]]
 ** Linux Note
 *** sed
 #+BEGIN_SRC sh
@@ -56,6 +57,8 @@ sudo apt-get update && sudo apt-get install nvidia-355
     objdump -tT libName.so | grep symbol
     #+END_SRC
 *** [[http://blog.csdn.net/wooin/article/details/580679][ =ldconfig= ]]
+*** kill
+**** [[http://www.thegeekstuff.com/2009/12/4-ways-to-kill-a-process-kill-killall-pkill-xkill/][documentation]]
 ** Tmux Note
 *** =tmux= plugin installation
     Add plugin to the list of TPM plugins in =.tmux.conf=:
@@ -72,6 +75,9 @@ Hit =prefix + I= to fetch the plugin and source it.
 **** [[https://github.com/ChristosChristofidis/awesome-deep-learning][awesome deep learning git]]
 **** [[https://github.com/jbhuang0604/awesome-computer-vision][awesome computer vision git]]
 **** [[https://www.quora.com/How-do-I-learn-deep-learning-in-2-months][deep learning resource from quora]]
+**** TODO [[https://www.youtube.com/playlist?list=PLrAXtmErZgOfMuxkACrYnD2fTgbzk2THW][Deep Learning School 2016]]
+     SCHEDULED: <2016-10-04 Tue>
+**** [[http://mp.weixin.qq.com/s?__biz=MjM5NDE4MTc2OA==&mid=2447696429&idx=1&sn=ceb6a5faf7c58fb814894f84c01e979d&mpshare=1&scene=1&srcid=1009zhC5J9YV0EhlGHtBISM2#rd][awesome series for machine learning]]
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
 *** DONE [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
@@ -209,6 +215,39 @@ sigmoid and rectified linear units.
 ******* Linear Regime! Does not saturate! Does not die!
 ******* Problem: doubles the number of parameters/neuron :(
 ***** preprocessing
+****** Data Augmentation
+******* Change the pixels without changing the label Train on transformed data VERY widely used
+******* Horizontal flips
+******* Random crops/scales
+******** Training: sample random crops / scales ResNet:
+         1. Pick random L in range [256, 480]
+         2. Resize training image, short side = L
+         3. Sample random 224 x 224 patch
+******** Testing: average a fixed set of crops
+         1. Resize image at 5 scales: {224, 256, 384, 480, 640}
+         2. For each size, use 10 224 x 224 crops: 4 corners +
+            center, + flips
+******** Color jitter
+********* Simple
+          1. Randomly jitter contrast
+********* Complex
+          1. Apply PCA to all [R, G, B] pixels in training set
+          2. Sample a “color offset” along principal component directions
+          3. Add offset to all pixels of a training image
+******** Get creative! 
+********* Random mix/combinations of :
+          - translation
+          - rotation
+          - stretching
+          - shearing
+          - lens distortions, ... (go crazy)
+******* Summary 
+        - Simple to implement, use it
+        - Especially useful for small datasets
+        - Fits into framework of noise / marginalization
+******** A general theme: 
+         - Training: Add random noise
+         - pTesting: Marginalize over the noise
 ***** weight initialization
 ****** Small random numbers (gaussian with zero mean and 1e-2 standard deviation)
        #+BEGIN_SRC python
@@ -239,10 +278,10 @@ sigmoid and rectified linear units.
 ****** Batch Normalization
 ******* consider a batch of activations at some layer. To make each dimension unit gaussian, apply:
         \[ \hat{x}_{(k)}} = \frac{x^{(k)} - E[x^{(k)}]}{\sqrt{Var[x^{(k)}]}} \]
-******* his is a vanilla differentiable function...
+******* this is a vanilla differentiable function...
 ******* compute the empirical mean and variance independently for each dimension.
 ******* Normalize
-******* Usually inserted after Fully Connected / (or Convolutional, as we’ll see soon) layers, and before nonlinearity.
+******* Usually inserted after Fully Connected / (or Convolutional) layers, and before nonlinearity.
 ******* Problem: do we necessarily want a unit gaussian input to a tanh layer?
 ******* advantages
 ******** improves gradient flow through the network
@@ -554,6 +593,90 @@ sigmoid and rectified linear units.
                  x += - learning_rate * dx
                  x_test = 0.9995*x_test + 0.005*x  # use for test set
            #+END_SRC
+*** CNN Note
+**** Case Study
+***** ResNet
+      - Batch Normalization after every CONV layer
+      - Xavier/2 initialization from He et al.
+      - SGD + Momentum (0.9)
+      - Learning rate: 0.1, divided by 10 when validation error plateaus Mini-batch size 256
+      - Weight decay of 1e-5 No dropout used
+      - 2-3 weeks of training on 8 GPU machine
+      - at runtime: faster than a VGGNet! (even though it has 8x more layers)
+**** cnn summary
+     - ConvNets stack CONV,POOL,FC layers
+     - - Trend towards smaller filters and deeper architectures
+     - Trend towards getting rid of POOL/FC layers (just CONV) -
+       Typical architectures look like  [(CONV-RELU)*N-POOL?]*M-(FC-RELU)*K,SOFTMAX
+     - where N is usually up to ~5, M is large, 0 <= K <= 2. but
+       recent advances such as ResNet/GoogLeNet challenge this paradigmp
+*** Deep learning frameworks
+**** [[/Users/zhangli/Documents/Library.papers3/Files/05/05D0A096-FABE-4247-99AB-F567BFFFBA3A.pptx][comparison]]
+**** recommendation
+     - Feature extraction / finetuning existing models: Use Caffe
+     - Complex uses of pretrained models: Use Lasagne or Torch
+     - Write your own layers: Use Torch
+     - Crazy RNNs: Use Theano or Tensorflow
+     - Huge model, need model parallelism: Use TensorFlow
+*** transfer learning
+**** [[http://cs231n.github.io/transfer-learning/][tutorial]]
+**** ConvNet as fixed feature extractor
+     - It is important for performance that these codes are ReLUd
+      (i.e. thresholded at zero) if they were also thresholded during
+      the training of the ConvNet on ImageNet (as is usually the
+      case). Once you extract the 4096-D codes for all images, train
+      a linear classifier (e.g. Linear SVM or Softmax classifier) for
+      the new dataset.
+**** Fine-tuning the ConvNet 
+     - This is motivated by the observation that the earlier features
+       of a ConvNet contain more generic features (e.g. edge detectors
+       or color blob detectors) that should be useful to many tasks,
+       but later layers of the ConvNet becomes progressively more
+       specific to the details of the classes contained in the
+       original dataset.
+     - Keeping in mind that ConvNet features are more generic in early
+       layers and more original-dataset-specific in later layers, here
+       are some common rules of thumb for navigating the 4 major
+       scenarios: 
+       1. New dataset is small and similar to original dataset. Since
+          the data is small, it is not a good idea to fine-tune the
+          ConvNet due to overfitting concerns. Since the data is
+          similar to the original data, we expect higher-level
+          features in the ConvNet to be relevant to this dataset as
+          well. Hence, the best idea might be to train a linear
+          classifier on the CNN codes.
+       2. New dataset is large and similar to the original
+          dataset. Since we have more data, we can have more
+          confidence that we won’t overfit if we were to try to
+          fine-tune through the full network.
+       3. New dataset is small but very different from the original
+          dataset. Since the data is small, it is likely best to only
+          train a linear classifier. Since the dataset is very
+          different, it might not be best to train the classifier form
+          the top of the network, which contains more dataset-specific
+          features. Instead, it might work better to train the SVM
+          classifier from activations somewhere earlier in the
+          network.
+       4. New dataset is large and very different from the original
+          dataset. Since the dataset is very large, we may expect that
+          we can afford to train a ConvNet from scratch. However, in
+          practice it is very often still beneficial to initialize
+          with weights from a pretrained model. In this case, we would
+          have enough data and confidence to fine-tune through the
+          entire network. 
+**** reference
+***** [[/Users/zhangli/Documents/Library.papers3/Files/27/27F7C527-407C-4EF2-A337-350046B64813.pdf][CNN Features off-the-shelf: an Astounding Baseline for Recognition]] [[[http://arxiv.org/pdf/1403.6382v3.pdf][arxiv]]]
+*** object detection
+**** tutorial
+***** TODO [[http://pjreddie.com/darknet/yolo/][yolo]]
+      SCHEDULED: <2016-09-27 Tue>
+****** references
+******* [[/Users/zhangli/Documents/Library.papers3/Files/C0/C0EBD2D7-126A-4290-8AB6-AAA516E5A5DA.pdf][You Only Look Once: Unified, Real-Time Object Detection]] [[https://arxiv.org/pdf/1506.02640v5.pdf][(arxiv)]]
+*** imbalance data for classification
+**** [[https://www.quora.com/In-classification-how-do-you-handle-an-unbalanced-training-set][quora answers]]
+*** evaluation for classification
+**** [[http://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/][confusion matrix]]
+**** [[http://www.dataschool.io/roc-curves-and-auc-explained/][ROC curve]]
 ** Caffe Note
 *** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 **** using caffe to extract features
@@ -886,6 +1009,23 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5
 #+END_SRC
 *** docker swarm
     - [[http://blog.arungupta.me/clustering-docker-swarm-techtip85/][tutorial]]
+*** rm all exited containers
+    #+BEGIN_SRC sh
+      docker ps -a | grep Exited | cut -d ' ' -f 1 | xargs docker rm
+    #+END_SRC
+*** save and load image
+    #+BEGIN_SRC sh
+      # Get image id by doing:
+      sudo docker images
+
+      # Say you have image with id "matrix-data"
+
+      # Save image with id:
+      sudo docker save -o /home/matrix/matrix-data.tar matrix-data
+
+      # Copy image from path to any host Now import to your local docker using :
+      sudo docker load -i <path to copied image file>
+    #+END_SRC
 ** Proxy
 *** proxychains
 #+BEGIN_SRC sh
@@ -1055,8 +1195,6 @@ lsof -i -n -P | grep -i listen
      #+END_SRC
 **** TODO =fblualib= [[https://github.com/facebook/fblualib][git repository]]
      SCHEDULED: <2016-09-11 Sun>
-*** TODO [[https://github.com/facebook/fb.resnet.torch/tree/master/pretrained][fb.resnet.torch]]
-    SCHEDULED: <2016-09-11 Sun>
 *** [[https://github.com/torch/nngraph][ =nngraph= tutorial]]
 *** TODO [[https://github.com/torch/demos][torch demos and tutorial]]
     SCHEDULED: <2016-09-12 Mon>
@@ -1112,7 +1250,10 @@ lsof -i -n -P | grep -i listen
     #+END_SRC
 *** TODO resnet torch 
     SCHEDULED: <2016-09-19 Mon>
-    - [[https://github.com/szagoruyko/wide-residual-networks][resnet git repository Sergey Zagoruyko]]
+**** [[https://github.com/szagoruyko/wide-residual-networks][resnet git repository Sergey Zagoruyko]]
+**** TODO [[https://github.com/facebook/fb.resnet.torch/tree/master/pretrained][fb.resnet.torch]]
+     SCHEDULED: <2016-09-11 Sun>
+**** [[http://kaiminghe.com/icml16tutorial/icml2016_tutorial_deep_residual_networks_kaiminghe.pdf][kaiming He tutorial]]
 *** [[https://github.com/szagoruyko/cifar.torch][cifar.torch]]
 **** [[https://github.com/szagoruyko/cifar.torch][git repository]]
 **** [[http://torch.ch/blog/2015/07/30/cifar.html][blog]]
@@ -1311,7 +1452,10 @@ lsof -i -n -P | grep -i listen
        print(y)
        print(x)
      #+END_SRC
-
+*** neural style
+**** TODO [[https://github.com/jcjohnson/neural-style.git][neural style in torch]]
+     SCHEDULED: <2016-10-11 Tue>
+**** TODO [[https://github.com/jcjohnson/fast-neural-style][fast-neural-style in torch]]
 ** Lua
 *** =__index= metamethod
     当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
@@ -1343,12 +1487,10 @@ lsof -i -n -P | grep -i listen
         end
       })
 
-      print('hello world')
       print(mytable.key1,mytable.key2)
     #+END_SRC
 
     #+RESULTS:
-    : hello world
     : value1	metatablevalue
 
     1. 在表中查找，如果找到，返回该元素，找不到则继续
@@ -1420,8 +1562,63 @@ lsof -i -n -P | grep -i listen
     : s
 *** [[http://www.newthinktank.com/2015/06/learn-lua-one-video/][one video tutorial for lua]]
 ** Git
-*** git stash
+*** [[https://www.quora.com/What-is-the-best-Git-cheat-sheet][git cheatsheet]]
+*** Git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
+*** ssh-key password
+    * use ssh address not https
+    #+BEGIN_SRC sh
+      git remote set-url origin git@github.com:yourname/yourrepo.git
+    #+END_SRC
+*** Creating mutilple github accounts
+    1. create another ssh key for a completely new account on Github
+       #+BEGIN_SRC sh
+         ssh-keygen -t rsa -C "Your Email Address" # Generates the key
+       #+END_SRC
+    2. Give it a name (e.g. xinyixiao)
+    3. A public key and randomart are generted again
+    4. copy public key to github for setting
+    5. We used a unique name for our keys so we have to tell ssh about them.
+       #+BEGIN_SRC sh
+         ssh-add ~/.ssh/xixaoxinyi
+         ssh-add ~/.ssh/xinyixiao
+       #+END_SRC
+    6. touch ~/.ssh/config
+    7. define which account we want to work with by associating a keyword to our 2 different hosts.
+       Host github.com
+       HostName github.com
+       User xiaoxinyi
+       IdentifyFile ~/.ssh/xiaoxinyi
+
+       Host github.com
+       HostName github-aliyun
+       User xinyixiao
+       IdentifyFile ~/.ssh/xinyixiao
+    8. git remote add origin git@github-aliyun:xinyixiao/git-aliyun.git
+    9. git push origin master
+*** Fork and Pull workflow
+    * The way the Fork & Pull works is that anyone can Fork a
+      repository and make changes locally. They don't have the
+      ability to push their potentially damaging code. They can
+      however request that host repository pull their changes if they
+      would like using a Pull Request. (This is a very common
+      workflow in the open source community.)
+      1. git remote add upstream
+         git@github.com/xiaoxinyi/git-aliyun.git
+         # Assign the original remote and not the fork to the keyword
+         # upstream
+      2. git fetch upstream
+         # Pull in change a file locally, stage and commit it. I can
+         # the push it to more Fork on github
+      3. git merge upstream/master  # merges files on github with my
+         local files
+      4. If I think my changes should be merged with the original
+         repository I can make a Pull Request. Click on Compare,
+         review, create a pull request on GitHub.
+      5. The owner of the original repository can see how many Pull
+         Requests they have received on the right side of the
+         screen. 
+*** [[https://www.atlassian.com/git/tutorials/syncing][git sync tutorial]]
 ** C++
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
     SCHEDULED: <2016-09-06 二>
@@ -1430,3 +1627,6 @@ lsof -i -n -P | grep -i listen
 *** [[http://www.alfredworkflow.com/][workflow repository]]
 ** Latex
 *** [[http://latex.wikia.com/wiki/List_of_LaTeX_symbols][reference for symbol]]
+** VPN
+*** tutorial
+**** [[https://www.digitalocean.com/community/tutorials/how-to-set-up-an-openvpn-server-on-ubuntu-16-04][openvpn on ubuntu 16.04]]
