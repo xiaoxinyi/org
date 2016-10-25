@@ -1619,6 +1619,60 @@ lsof -i -n -P | grep -i listen
          Requests they have received on the right side of the
          screen. 
 *** [[https://www.atlassian.com/git/tutorials/syncing][git sync tutorial]]
+=======
+**** ssh-key password
+     * use ssh address not https
+     #+BEGIN_SRC sh
+       git remote set-url origin git@github.com:yourname/yourrepo.git
+     #+END_SRC
+**** Creating mutilple github accounts
+     1. create another ssh key for a completely new account on Github
+        #+BEGIN_SRC sh
+          ssh-keygen -t rsa -C "Your Email Address" # Generates the key
+        #+END_SRC
+     2. Give it a name (e.g. xinyixiao)
+     3. A public key and randomart are generted again
+     4. copy public key to github for setting
+     5. We used a unique name for our keys so we have to tell ssh about them.
+        #+BEGIN_SRC sh
+          ssh-add ~/.ssh/xixaoxinyi
+          ssh-add ~/.ssh/xinyixiao
+        #+END_SRC
+     6. touch ~/.ssh/config
+     7. define which account we want to work with by associating a keyword to our 2 different hosts.
+        Host github.com
+        HostName github.com
+        User xiaoxinyi
+        IdentifyFile ~/.ssh/xiaoxinyi
+
+        Host github.com
+        HostName github-aliyun
+        User xinyixiao
+        IdentifyFile ~/.ssh/xinyixiao
+     8. git remote add origin git@github-aliyun:xinyixiao/git-aliyun.git
+     9. git push origin master
+**** Fork and Pull workflow
+     * The way the Fork & Pull works is that anyone can Fork a
+       repository and make changes locally. They don't have the
+       ability to push their potentially damaging code. They can
+       however request that host repository pull their changes if they
+       would like using a Pull Request. (This is a very common
+       workflow in the open source community.)
+       1. git remote add upstream
+          git@github.com/xiaoxinyi/git-aliyun.git
+          # Assign the original remote and not the fork to the keyword
+          # upstream
+       2. git fetch upstream
+          # Pull in change a file locally, stage and commit it. I can
+          # the push it to more Fork on github
+       3. git merge upstream/master  # merges files on github with my
+          local files
+       4. If I think my changes should be merged with the original
+          repository I can make a Pull Request. Click on Compare,
+          review, create a pull request on GitHub.
+       5. The owner of the original repository can see how many Pull
+          Requests they have received on the right side of the
+          screen. 
 ** C++
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
     SCHEDULED: <2016-09-06 二>
