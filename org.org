@@ -1,9 +1,15 @@
 * Tutorial
 ** Paper Reading
-*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/D6/D6FD20F2-226C-49D9-B4DB-FF1AF8C9C987.pdf][Caffe: Convolutional Architecture for Fast Feature Embedding]]
-    SCHEDULED: <2016-08-24 Wed>
-*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]][[[http://arxiv.org/abs/1502.03167][arxiv]]] 
-*** TODO [[/Users/zhangli/Documents/Library.papers3/Files/27/27F7C527-407C-4EF2-A337-350046B64813.pdf][CNN Features off-the-shelf: an Astounding Baseline for Recognition]] [[[http://arxiv.org/pdf/1403.6382v3.pdf][arxiv]]]
+*** Deep learning
+**** general paper
+***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/D6/D6FD20F2-226C-49D9-B4DB-FF1AF8C9C987.pdf][Caffe: Convolutional Architecture for Fast Feature Embedding]]
+      SCHEDULED: <2016-08-24 Wed>
+***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]][[[http://arxiv.org/abs/1502.03167][arxiv]]] 
+***** DONE [[/Users/zhangli/Documents/Library.papers3/Files/27/27F7C527-407C-4EF2-A337-350046B64813.pdf][CNN Features off-the-shelf: an Astounding Baseline for Recognition]] [[[http://arxiv.org/pdf/1403.6382v3.pdf][arxiv]]]
+      CLOSED: [2016-10-26 Wed 17:12]
+**** Object detection
+***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/08/08D6B019-A046-46B3-B04D-07ED58F12367.pdf][OverFeat:Integrated Recognition, Localization and Detection using Convolutional Networks]]
+      SCHEDULED: <2016-10-26 Wed>
 ** Linux Note
 *** sed
 #+BEGIN_SRC sh
