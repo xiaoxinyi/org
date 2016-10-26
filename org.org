@@ -7,9 +7,11 @@
 ***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/73/7398D9FD-507C-42B8-A5C1-07CABA329B0D.pdf][Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift]][[[http://arxiv.org/abs/1502.03167][arxiv]]] 
 ***** DONE [[/Users/zhangli/Documents/Library.papers3/Files/27/27F7C527-407C-4EF2-A337-350046B64813.pdf][CNN Features off-the-shelf: an Astounding Baseline for Recognition]] [[[http://arxiv.org/pdf/1403.6382v3.pdf][arxiv]]]
       CLOSED: [2016-10-26 Wed 17:12]
-**** Object detection
+**** Localization and object detection
 ***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/08/08D6B019-A046-46B3-B04D-07ED58F12367.pdf][OverFeat:Integrated Recognition, Localization and Detection using Convolutional Networks]]
       SCHEDULED: <2016-10-26 Wed>
+***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/C0/C0C326C2-9D41-41B1-9384-D98592C664FA.pdf][What makes for effective detection proposals?]]［[[https://arxiv.org/pdf/1502.05082v3.pdf][arxiv]]］
+      SCHEDULED: <2016-10-27 Thu>
 ** Linux Note
 *** sed
 #+BEGIN_SRC sh
@@ -65,6 +67,11 @@ sudo apt-get update && sudo apt-get install nvidia-355
 *** [[http://blog.csdn.net/wooin/article/details/580679][ =ldconfig= ]]
 *** kill
 **** [[http://www.thegeekstuff.com/2009/12/4-ways-to-kill-a-process-kill-killall-pkill-xkill/][documentation]]
+*** find
+**** or
+     #+BEGIN_SRC sh
+       find Documents \( -name "*.py" -or -name "*.html" \)
+     #+END_SRC
 ** Tmux Note
 *** =tmux= plugin installation
     Add plugin to the list of TPM plugins in =.tmux.conf=:
