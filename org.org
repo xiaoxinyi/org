@@ -12,6 +12,9 @@
       SCHEDULED: <2016-10-26 Wed>
 ***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/C0/C0C326C2-9D41-41B1-9384-D98592C664FA.pdf][What makes for effective detection proposals?]]［[[https://arxiv.org/pdf/1502.05082v3.pdf][arxiv]]］
       SCHEDULED: <2016-10-27 Thu>
+***** TODO [[https://arxiv.org/pdf/1608.08021v1.pdf][PVANET: Deep but Lightweight Neural Networks for Real-time Object Detection]]
+      SCHEDULED: <2016-10-27 Thu>
+***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/1B/1B6E4A83-D59E-403D-B84A-C3DB8FFF3760.pdf][You Only Look Once: Unified, Real-Time Object Detection]] [[[https://arxiv.org/pdf/1506.02640v5.pdf][arxiv]]]
 ** Linux Note
 *** sed
 #+BEGIN_SRC sh
@@ -91,6 +94,7 @@ Hit =prefix + I= to fetch the plugin and source it.
 **** TODO [[https://www.youtube.com/playlist?list=PLrAXtmErZgOfMuxkACrYnD2fTgbzk2THW][Deep Learning School 2016]]
      SCHEDULED: <2016-10-04 Tue>
 **** [[http://mp.weixin.qq.com/s?__biz=MjM5NDE4MTc2OA==&mid=2447696429&idx=1&sn=ceb6a5faf7c58fb814894f84c01e979d&mpshare=1&scene=1&srcid=1009zhC5J9YV0EhlGHtBISM2#rd][awesome series for machine learning]]
+**** [[https://github.com/kjw0612/awesome-deep-vision][awesome-deep-vision]]
 *** TODO [[http://karpathy.github.io/neuralnets/][Karpathy cnn tutorial]]
    SCHEDULED: <2016-08-21 Sun>
 *** DONE [[http://karpathy.github.io/2015/05/21/rnn-effectiveness/][RNN tutorial]]
