@@ -1580,7 +1580,7 @@ lsof -i -n -P | grep -i listen
 *** [[http://www.newthinktank.com/2015/06/learn-lua-one-video/][one video tutorial for lua]]
 ** Git
 *** [[https://www.quora.com/What-is-the-best-Git-cheat-sheet][git cheatsheet]]
-*** Git stash
+*** Git stah
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
 *** ssh-key password
     * use ssh address not https
@@ -1590,6 +1590,7 @@ lsof -i -n -P | grep -i listen
 *** Creating mutilple github accounts
     1. create another ssh key for a completely new account on Github
        #+BEGIN_SRC sh
+         eval `ssh-agent -s`
          ssh-keygen -t rsa -C "Your Email Address" # Generates the key
        #+END_SRC
     2. Give it a name (e.g. xinyixiao)
