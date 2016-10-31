@@ -1702,3 +1702,9 @@ lsof -i -n -P | grep -i listen
 ** VPN
 *** tutorial
 **** [[https://www.digitalocean.com/community/tutorials/how-to-set-up-an-openvpn-server-on-ubuntu-16-04][openvpn on ubuntu 16.04]]
+** Octave
+*** install octave
+    #+BEGIN_SRC sh
+      brew install gnuplot --with-aquaterm --with-qt5
+    #+END_SRC
+    add setenv('GNUTERM','aqua') /usr/local/Cellar/octave/4.2.0-rc2_1/share/octave/site/m/startup
