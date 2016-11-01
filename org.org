@@ -873,7 +873,7 @@ Out[3]: 2
      SCHEDULED: <2016-08-25 Thu>
 *** TODO [[https://github.com/soumith/convnet-benchmarks][convnet benchmarks]]
     SCHEDULED: <2016-09-09 Fri>
-** Emacs Note
+** Emacs Notes
 *** =elpy=
 **** use-package =elpy=
 #+BEGIN_SRC lisp
@@ -907,6 +907,43 @@ gcc -xc++ -E -v -
         :config
         (require 'impatient-mode))
     #+END_SRC
+*** change etags to ctags
+**** install =eproject= =etags-select=
+     #+BEGIN_SRC elisp
+
+       ;; eproject
+       (use-package eproject
+         :ensure t)
+
+       (use-package etags-select
+         :ensure t
+         :config
+         (defun build-ctags ()
+           (interactive)
+           (message "building project tags")
+           (let ((root (eproject-root)))
+             (shell-command (concat "ctags -e -R --extra=+fq --exclude=db --exclude=test --exclude=.git --exclude=public -f " root "TAGS " root))\
+       )
+           (visit-project-tags)
+           (message "tags built successfully"))
+
+         (defun visit-project-tags ()
+           (interactive)
+           (let ((tags-file (concat (eproject-root) "TAGS")))
+             (visit-tags-table tags-file)
+             (message (concat "Loaded " tags-file))))
+
+         (defun my-find-tag ()
+           (interactive)
+           (if (file-exists-p (concat (eproject-root) "TAGS"))
+               (visit-project-tags)
+             (build-ctags))
+           (etags-select-find-tag-at-point))
+
+         (global-set-key (kbd "M-.") 'my-find-tag)
+
+         )
+     #+END_SRC
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
