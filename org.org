@@ -976,6 +976,11 @@ gcc -xc++ -E -v -
        (add-hook 'lua-mode-hook 'hs-minor-mode)
 
      #+END_SRC
+*** install on =OSX=
+    #+BEGIN_SRC sh
+      brew install --with-cocoa --srgb --with-x  emacs
+      brew linkapps emacs
+    #+END_SRC
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
@@ -1022,6 +1027,21 @@ gcc -xc++ -E -v -
 
       (add-hook 'org-mode-hook 'zl/set-org-keys)
     #+END_SRC
+*** babel-language
+**** custom interpreter
+#+begin_src emacs-lisp :results none
+(setq org-babel-python-command "python3")
+#+end_src
+
+#+begin_src python :results output
+import sys
+print(sys.version)
+#+end_src
+
+#+RESULTS:
+: 3.5.1 |Anaconda 4.0.0 (x86_64)| (default, Dec  7 2015, 11:24:55) 
+: [GCC 4.2.1 (Apple Inc. build 5577)]
+
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -1242,10 +1262,102 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 lsof -iTCP -sTCP:LISTEN -n -P
 lsof -i -n -P | grep -i listen
 #+END_SRC
+
+#+RESULTS:
+| COMMAND |  PID | USER    | FD  | TYPE |             DEVICE | SIZE/OFF | NODE | NAME    |          |
+| Papers  |  448 | zhangli | 45u | IPv4 | 0x96671a7181200663 | 0t0      | TCP  | *:17320 | (LISTEN) |
+| Papers  |  448 | zhangli | 47u | IPv6 | 0x96671a716df4a343 | 0t0      | TCP  | *:17320 | (LISTEN) |
+| Alfred  | 1220 | zhangli | 4u  | IPv4 | 0x96671a71837b7663 | 0t0      | TCP  | *:57353 | (LISTEN) |
+| Alfred  | 1220 | zhangli | 7u  | IPv6 | 0x96671a716df49883 | 0t0      | TCP  | *:57353 | (LISTEN) |
+| Papers  |  448 | zhangli | 45u | IPv4 | 0x96671a7181200663 | 0t0      | TCP  | *:17320 | (LISTEN) |
+| Papers  |  448 | zhangli | 47u | IPv6 | 0x96671a716df4a343 | 0t0      | TCP  | *:17320 | (LISTEN) |
+| Alfred  | 1220 | zhangli | 4u  | IPv4 | 0x96671a71837b7663 | 0t0      | TCP  | *:57353 | (LISTEN) |
+| Alfred  | 1220 | zhangli | 7u  | IPv6 | 0x96671a716df49883 | 0t0      | TCP  | *:57353 | (LISTEN) |
+
 *** brew
     #+BEGIN_SRC sh :results output
       brew info imagemagick
     #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    imagemagick: stable 6.9.6-2 (bottled), HEAD
+    Tools and libraries to manipulate images in many formats
+    https://www.imagemagick.org/
+    /usr/local/Cellar/imagemagick/6.9.1-10 (1,450 files, 17.5M)
+      Poured from bottle on 2015-07-27 at 00:10:58
+    /usr/local/Cellar/imagemagick/6.9.5-9_2 (1,468 files, 25M)
+      Built from source on 2016-09-19 at 20:04:41 with: --with-x11
+    /usr/local/Cellar/imagemagick/6.9.6-2 (1,469 files, 25M) *
+      Built from source on 2016-10-31 at 10:43:46 with: --with-x11
+    From: https://github.com/Homebrew/homebrew-core/blob/master/Formula/imagemagick.rb
+    ==> Dependencies
+    Build: pkg-config
+    Required: libtool, xz
+    Recommended: jpeg, libpng, libtiff, freetype
+    Optional: fontconfig, little-cms, little-cms2, libwmf, librsvg, liblqr, openexr, ghostscript, webp, openjpeg, fftw, pango
+    ==> Requirements
+    Optional: x11, perl >= 5.5
+    ==> Options
+    --with-fftw
+        Compile with FFTW support
+    --with-fontconfig
+        Build with fontconfig support
+    --with-ghostscript
+        Build with ghostscript support
+    --with-hdri
+        Compile with HDRI support
+    --with-liblqr
+        Build with liblqr support
+    --with-librsvg
+        Build with librsvg support
+    --with-libwmf
+        Build with libwmf support
+    --with-little-cms
+        Build with little-cms support
+    --with-little-cms2
+        Build with little-cms2 support
+    --with-opencl
+        Compile with OpenCL support
+    --with-openexr
+        Build with openexr support
+    --with-openjpeg
+        Build with openjpeg support
+    --with-openmp
+        Compile with OpenMP support
+    --with-pango
+        Build with pango support
+    --with-perl
+        Compile with PerlMagick
+    --with-quantum-depth-16
+        Compile with a quantum depth of 16 bit
+    --with-quantum-depth-32
+        Compile with a quantum depth of 32 bit
+    --with-quantum-depth-8
+        Compile with a quantum depth of 8 bit
+    --with-webp
+        Build with webp support
+    --with-x11
+        Build with x11 support
+    --with-zero-configuration
+        Disables depending on XML configuration files
+    --without-freetype
+        Build without freetype support
+    --without-jpeg
+        Build without jpeg support
+    --without-libpng
+        Build without libpng support
+    --without-libtiff
+        Build without libtiff support
+    --without-magick-plus-plus
+        disable build/install of Magick++
+    --without-modules
+        Disable support for dynamically loadable modules
+    --without-threads
+        Disable threads support
+    --HEAD
+        Install HEAD version
+#+end_example
 
 ** Torch
 *** TODO [[https://github.com/torch/nn/blob/master/doc/training.md#stochasticgradientmodule-criterion][gradient in torch]]
@@ -1497,12 +1609,12 @@ lsof -i -n -P | grep -i listen
 *** Tensor note
 **** =Tensor:t()=
      #+BEGIN_SRC emacs-lisp :results none
-       (setq org-babel-lua-command "lua5.1")
+       (setq org-babel-lua-command "th")
      #+END_SRC
 
 
      #+BEGIN_SRC lua :results output
-       torch = require('torch')
+       -- torch = require('torch')
 
        x = torch.Tensor(2,3):fill(1)
 
@@ -1520,13 +1632,56 @@ lsof -i -n -P | grep -i listen
      #+END_SRC
 
      #+RESULTS:
-**** =index(dim, index)=
-     #+BEGIN_SRC lua :results output :interpreter /usr/local/bin/lua
-       -- [[
-       Returns a new Tensor which indexes the given tensor along dimension dim and using the entries in torch.LongTensor index. The returned tensor has the same number of dimensions as the original tensor. The returned tensor does not use the same storage as the original tensor.
-       ]]
+     #+begin_example
 
-       torch = require 'torch'
+       ______             __   |  Torch7                                         
+      /_  __/__  ________/ /   |  Scientific computing for Lua. 
+       / / / _ \/ __/ __/ _ \  |  Type ? for help                                
+      /_/  \___/_/  \__/_//_/  |  https://github.com/torch         
+                               |  http://torch.ch                  
+
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+      2  2  2
+      2  2  2
+     [torch.DoubleTensor of size 2x3]
+
+                                                                           [0.0001s]	
+      2  2  2
+      2  2  2
+     [torch.DoubleTensor of size 2x3]
+
+                                                                           [0.0001s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+      2  2  2
+      2  2  2
+     [torch.DoubleTensor of size 2x3]
+
+                                                                           [0.0000s]	
+      3.1400  3.1400
+      3.1400  3.1400
+      3.1400  3.1400
+     [torch.DoubleTensor of size 3x2]
+
+                                                                           [0.0001s]	
+     Do you really want to exit ([y]/n)? 	
+#+end_example
+
+**** =index(dim, index)=
+     #+BEGIN_SRC lua :results output 
+       -- [[
+       -- Returns a new Tensor which indexes the given tensor along dimension dim and using the entries in torch.LongTensor index. The returned tensor has the same number of dimensions as the original tensor. The returned tensor does not use the same storage as the original tensor.
+       -- ]]
+
+       -- torch = require 'torch'
        x = torch.rand(5, 5)
        print(x)
 
@@ -1538,6 +1693,60 @@ lsof -i -n -P | grep -i listen
        print(y)
        print(x)
      #+END_SRC
+
+     #+RESULTS:
+     #+begin_example
+
+       ______             __   |  Torch7                                         
+      /_  __/__  ________/ /   |  Scientific computing for Lua. 
+       / / / _ \/ __/ __/ _ \  |  Type ? for help                                
+      /_/  \___/_/  \__/_//_/  |  https://github.com/torch         
+                               |  http://torch.ch                  
+
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+      0.5001  0.6686  0.8542  0.2808  0.5107
+      0.7807  0.9526  0.7597  0.6664  0.3614
+      0.4027  0.0670  0.1209  0.0648  0.8693
+      0.1669  0.4058  0.9315  0.4091  0.8107
+      0.4265  0.5755  0.8383  0.3496  0.7982
+     [torch.DoubleTensor of size 5x5]
+
+                                                                           [0.0001s]	
+                                                                           [0.0000s]	
+                                                                           [0.0000s]	
+      0.4027  0.0670  0.1209  0.0648  0.8693
+      0.5001  0.6686  0.8542  0.2808  0.5107
+     [torch.DoubleTensor of size 2x5]
+
+                                                                           [0.0001s]	
+                                                                           [0.0000s]	
+      1  1  1  1  1
+      1  1  1  1  1
+     [torch.DoubleTensor of size 2x5]
+
+                                                                           [0.0001s]	
+                                                                           [0.0000s]	
+      1  1  1  1  1
+      1  1  1  1  1
+     [torch.DoubleTensor of size 2x5]
+
+                                                                           [0.0001s]	
+      0.5001  0.6686  0.8542  0.2808  0.5107
+      0.7807  0.9526  0.7597  0.6664  0.3614
+      0.4027  0.0670  0.1209  0.0648  0.8693
+      0.1669  0.4058  0.9315  0.4091  0.8107
+      0.4265  0.5755  0.8383  0.3496  0.7982
+     [torch.DoubleTensor of size 5x5]
+
+                                                                           [0.0001s]	
+     Do you really want to exit ([y]/n)? 	
+#+end_example
+
 *** neural style
 **** TODO [[https://github.com/jcjohnson/neural-style.git][neural style in torch]]
      SCHEDULED: <2016-10-11 Tue>
@@ -1777,3 +1986,4 @@ lsof -i -n -P | grep -i listen
       brew install gnuplot --with-aquaterm --with-qt5
     #+END_SRC
     add setenv('GNUTERM','aqua') /usr/local/Cellar/octave/4.2.0-rc2_1/share/octave/site/m/startup
+
