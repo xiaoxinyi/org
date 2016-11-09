@@ -981,6 +981,10 @@ gcc -xc++ -E -v -
       brew install --with-cocoa --srgb --with-x  emacs
       brew linkapps emacs
     #+END_SRC
+*** others' emacs configuration
+**** TODO [[https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org][Sacha Chua’s Emacs configuration]]
+**** TODO [[https://github.com/danielmai/.emacs.d/blob/master/config.org][Danielmai's]]
+**** [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][hrs]]
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
@@ -1087,7 +1091,7 @@ array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
 
       emacs -nw /Users/zhangli/.ipython/profile_default/ipython_config.py
     #+END_SRC
-=c.TerminalInteractiveShell.confirm_exit = False=
+    set =c.TerminalInteractiveShell.confirm_exit = False=
 *** ipython share kernel
     #+BEGIN_SRC ipython
     %connect_info
@@ -1358,6 +1362,31 @@ lsof -i -n -P | grep -i listen
     --HEAD
         Install HEAD version
 #+end_example
+
+*** =CR= =LF=
+    The Carriage Return (CR) character (=0x0D=, =\r=) moves the cursor to
+    the beginning of the line without advancing to the next line. This
+    character is used as a new line character in Commodore and Early
+    Macintosh operating systems (OS-9 and earlier). 
+
+    The Line Feed (LF) character (=0x0A=, =\n=) moves the cursor down to
+    the next line without returning to the beginning of the line. This
+    character is used as a new line character in UNIX based systems
+    (Linux, Mac OSX, etc) 
+
+    The End of Line (EOL) sequence (0x0D 0x0A, =\r\n=) is actually two
+    ASCII characters, a combination of the CR and LF characters. It
+    moves the cursor both down to the next line and to the beginning
+    of that line. This character is used as a new line character in
+    most other non-Unix operating systems including Microsoft Windows,
+    Symbian OS and others.
+*** inspect file's encoding information
+    #+BEGIN_SRC sh
+      file -I org.org
+    #+END_SRC
+
+    #+RESULTS:
+    : org.org: text/plain; charset=utf-8
 
 ** Torch
 *** TODO [[https://github.com/torch/nn/blob/master/doc/training.md#stochasticgradientmodule-criterion][gradient in torch]]
