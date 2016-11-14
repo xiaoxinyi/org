@@ -39,6 +39,10 @@ sudo apt-get update && sudo apt-get install nvidia-355
 #+BEGIN_SRC sh
 apt list --installed
 #+END_SRC
+*** recent installed packages
+    #+BEGIN_SRC sh
+    grep " install " /var/log/dpkg.log
+    #+END_SRC
 *** list all users
 #+BEGIN_SRC sh
   sed 's/:.*//' /etc/passwd
