@@ -698,7 +698,7 @@ sigmoid and rectified linear units.
 *** evaluation for classification
 **** [[http://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/][confusion matrix]]
 **** [[http://www.dataschool.io/roc-curves-and-auc-explained/][ROC curve]]
-** Caffe Note
+ggggg** Caffe Note
 *** [[https://github.com/BVLC/caffe/tree/85bb397acfd383a676c125c75d877642d6b39ff6/examples/feature_extraction][extract feature]]
 **** using caffe to extract features
     #+BEGIN_SRC sh
@@ -2019,6 +2019,213 @@ lsof -i -n -P | grep -i listen
       # delete remote branch
       git push --delete origin feature
     #+END_SRC
+*** git add
+    #+BEGIN_SRC sh
+      # add only  modified files
+      git ls-files --modified | xargs git add
+    #+END_SRC
+*** git checkout
+    #+BEGIN_SRC sh
+      # pull a remote branch and create the same local branch
+      git checkout --track origin/raychar
+    #+END_SRC
+*** git cherry-pick
+    #+BEGIN_SRC sh
+      # Copy branch to another branch
+      git cherry-pick hash
+    #+END_SRC
+*** git diff
+    #+BEGIN_SRC sh
+      # diff unstaged files with last commit
+      git diff
+
+      # diff staged files with last commit
+      git diff --cached
+    #+END_SRC
+*** git log
+    #+BEGIN_SRC sh
+      # most used log command
+      git log --oneline --decorate --all --graph
+    #+END_SRC
+*** git merge
+    #+BEGIN_SRC sh
+      # Discard current merge
+      git merge --abort
+
+      # merge branch
+      git merge branch
+
+      # merge non fast forward
+      git metge --no --FF
+    #+END_SRC
+*** git ref
+**** push branch different names
+     Refspecs can be used with the git push command to give a different
+     name to the remote branch. For example, the following command
+     pushes the master branch to the origin remote repo like an
+     ordinary git push, but it uses qa-master as the name for the
+     branch in the origin repo  
+     #+BEGIN_SRC sh
+       git push origin master:refs/heads/qa-master
+     #+END_SRC
+**** non-fast-forward update remote repository
+     A refspec is specified as [+]<src>:<dst>. The <src> parameter is
+     the source branch in the local repository, and the <dst> parameter
+     is the destination branch in the remote repository. The optional +
+     sign is for forcing the remote repository to perform a
+     non-fast-forward update. 
+**** delete remote branches 
+     #+BEGIN_SRC sh
+       # use refspecs for deleting remote branches
+       git push origin :some-feature
+       git push origin --delete some-feature
+     #+END_SRC
+**** fetch specific branched
+     By default, git fetch fetches all of the branches in the remote repository. The reason for this is the following section of the .git/config file
+     [remote "origin"]
+       url = https://git@github.com:mary/example-repo.git
+       fetch = +refs/heads/*:refs/remotes/origin/*
+
+     To fetch only the master branch, change the fetch line to match the following
+        [remote "origin"]
+            url = https://git@github.com:mary/example-repo.git
+            fetch = +refs/heads/master:refs/remotes/origin/master
+
+     if you want to always push the master branch to qa-master in the origin remote
+        [remote "origin"]
+            url = https://git@github.com:mary/example-repo.git
+            fetch = +refs/heads/master:refs/remotes/origin/master
+            push = refs/heads/master:refs/heads/qa-master
+**** git head
+     #+BEGIN_SRC sh
+       # grandparent of HEAD
+       git show HEAD~2
+
+       # the first parent is from the branch that you were on when you performed the merge, and the second parent is from the branch that you passed to the git merge command.
+       # first parent merge second parent branch
+
+       # The ~ character will always follow the first parent of a merge commit. If you want to follow a different parent, you need to specify which one with the ^ character.
+
+       # if HEAD is a merge commit, the following returns the second parent of HEAD
+       git show HEAD^2
+
+
+       # Only list commits that are parent of the second parent of a merge commit
+       git log HEAD^2
+
+       # Remove the last 3 commits from the current branch
+       git reset HEAD~3
+
+       # Interactively rebase the last 3 commits on the current branch
+       git rebase -i HEAD~3
+     #+END_SRC
+**** git rest
+     #+BEGIN_SRC sh
+       git reset --hard HEAD  # current commit
+       git reset --hard HEAD^  # parent commit
+       git reset --hard HEAD^^ # grandparet commit
+
+       # Remove the specified file from the staging area, but leave the working directory unchanged.
+       git reset <file>
+       # Reset the staging area to match the most recent commit, but leave the working directory unchanged.
+       git reset
+       # Reset the staging area and the working directory to match the most recent commit.
+       git reset --hard
+     #+END_SRC
+**** git rm
+     #+BEGIN_SRC sh
+       # rm files from working space
+       git rm <file>
+
+       # untracked files but still in working space
+       git rm --cached <file>
+     #+END_SRC
+**** git rev-parse
+     #+BEGIN_SRC sh
+       # The following returns the hash of the commit pointed to by the master branch
+       git rev-parse master
+     #+END_SRC
+**** git show
+     #+BEGIN_SRC sh
+       # bring back deleted file from some version
+       git show commit_id:path/to/file > path/to/file
+     #+END_SRC
+**** git stash
+     #+BEGIN_SRC sh
+       ## By default, running git stash will stash:
+       # changes that have been added to your index (staged changes)
+       # changes made to files that are currently tracked by Git (unstaged changes)
+
+
+       ## But it will not stash:
+       # new files in your working copy that have not yet been staged
+       # files that have been ignored
+
+       git stash # stash staged file and tracked but unstaged file
+       git stash -u # stash untrack file
+       git stash -a # stash ignore file
+
+
+       # Creating a branch from your stash
+        git stash branch add-style stash@{1}
+       # Cleaning up your stash
+       git stash drop stash@{1}
+       git stash clear
+
+       git stash list
+       git stash save "add style to our site"
+
+       # Viewing stash diffs
+       git stash show
+       git stash show -p
+
+       # Partial stashes
+       git stash -p
+
+       # rename existing stash
+
+       git stash drop stash@{1}
+       git stash store -m 'refactor virturalenvironment.h|m to virtualenvironment.hh|mm' 0beef13ff5a36dccfee1c58cf7ad1508df524771
+
+       # stash untracked files with a stash msg
+       git stash save -u 'untracked files examples/ARAppCore/VirtualEnvironment.hh|mm'
+     #+END_SRC
+**** git submodule
+     #+BEGIN_SRC sh
+       git submodule add ../xx.git submod
+       git submodule update
+     #+END_SRC
+**** git update-index
+     #+BEGIN_SRC sh
+       # This will tell git you want to start ignoring the changes to the file
+       git update-index --assume-unchanged path/to/file
+
+       # When you want to start keeping track again
+       git update-index --no-assume-unchanged path/to/file
+     #+END_SRC
+**** gitignore
+     #+BEGIN_SRC sh
+       # Ignoring a previously committed file
+       echo debug.log >> .gitignore
+       git rm --cached debug.log
+       git commit -m "Start ignoring debug.log"
+
+       # Global Git ignore rules
+       touch ~/.gitignore
+       git config --global core.excludesFile ~/.gitignore
+
+       # Committing an ignored file
+       git add -f debug.log
+       git commit -m "Force adding debug.log"
+
+       echo !debug.log >> .gitignore
+       git add debug.log
+       git commit -m "Adding debug.log"
+
+       # Debugging .gitignore files
+       git check-ignore -v debug.log
+     #+END_SRC
+
 ** C++
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
     SCHEDULED: <2016-09-06 二>
@@ -2036,4 +2243,54 @@ lsof -i -n -P | grep -i listen
       brew install gnuplot --with-aquaterm --with-qt5
     #+END_SRC
     add setenv('GNUTERM','aqua') /usr/local/Cellar/octave/4.2.0-rc2_1/share/octave/site/m/startup
+** Objective-C
+*** delegate
+**** MyClass.h file should look like this (add delegate lines with comments!)
+     #+BEGIN_SRC c
+       #import <BlaClass/BlaClass.h>
 
+       @class MyClass;             //define class, so protocol can see MyClass
+       @protocol MyClassDelegate <NSObject>   //define delegate protocol
+           - (void) myClassDelegateMethod: (MyClass *) sender;  //define delegate method to be implemented within another class
+       @end //end protocol
+
+       @interface MyClass : NSObject {
+       }
+       @property (nonatomic, weak) id <MyClassDelegate> delegate; //define MyClassDelegate as delegate
+
+       @end
+     #+END_SRC
+**** MyClass.m file should look like this
+       #+BEGIN_SRC c
+         #import "MyClass.h"
+         @implementation MyClass
+         @synthesize delegate; //synthesise  MyClassDelegate delegate
+
+         - (void) myMethodToDoStuff {
+             [self.delegate myClassDelegateMethod:self]; //this will call the method implemented in your other class
+         }
+
+         @end
+       #+END_SRC
+**** To use your delegate in another class (UIViewController called MyVC in this case) MyVC.h:
+        #+BEGIN_SRC c
+          #import "MyClass.h"
+          @interface MyVC:UIViewController <MyClassDelegate> { //make it a delegate for MyClassDelegate
+          }
+        #+END_SRC
+**** MyVC.m:
+        #+BEGIN_SRC c
+          myClass.delegate = self;          //set its delegate to self somewhere
+
+          // Implement delegate method
+
+          - (void) myClassDelegateMethod: (MyClass *) sender {
+              NSLog(@"Delegates are great!");
+          }
+        #+END_SRC
+If I were to explain delegates to a C++/Java programmer I would say 
+What are delegates ? These are static pointers to classes within
+another class. Once you assign a pointer, you can call
+functions/methods in that class. Hence some functions of your class
+are "delegated" (In C++ world - pointer to by a class object pointer)
+to another class. 
