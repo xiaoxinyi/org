@@ -2230,6 +2230,13 @@ lsof -i -n -P | grep -i listen
       # clone a specific branch
       git clone -b <branch> <remote_repo>
     #+END_SRC
+*** Questions
+**** pull wrong branch into master
+     #+BEGIN_SRC sh
+       git reflog
+
+       git reset --hard <hash>
+     #+END_SRC
 ** C++
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/2A/2A75498D-39F3-4E24-A6F0-5CE79A0A5A11.pdf][C++ concurrency in action]]
     SCHEDULED: <2016-09-06 二>
