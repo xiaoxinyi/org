@@ -16,19 +16,6 @@
       SCHEDULED: <2016-10-27 Thu>
 ***** TODO [[/Users/zhangli/Documents/Library.papers3/Files/1B/1B6E4A83-D59E-403D-B84A-C3DB8FFF3760.pdf][You Only Look Once: Unified, Real-Time Object Detection]] [[[https://arxiv.org/pdf/1506.02640v5.pdf][arxiv]]]
 ** Linux Note
-*** sed
-#+BEGIN_SRC sh
-  # from line 90 to line 100
-  sed -n '90, 100p' file.txt
-
-  # line 100
-  sed -n '100, 1p' file.txt
-
-  # from line a to line b
-  sed -n 'a, bp' file.txt
-
-  # if a > b return line a
-#+END_SRC
 *** nvidia installation
 #+BEGIN_SRC sh
 sudo add-apt-repository ppa:graphics-drivers/ppa
@@ -46,6 +33,19 @@ apt list --installed
 *** list all users
 #+BEGIN_SRC sh
   sed 's/:.*//' /etc/passwd
+#+END_SRC
+*** sed
+#+BEGIN_SRC sh
+  # from line 90 to line 100
+  sed -n '90, 100p' file.txt
+
+  # line 100
+  sed -n '100, 1p' file.txt
+
+  # from line a to line b
+  sed -n 'a, bp' file.txt
+
+  # if a > b return line a
 #+END_SRC
 *** list all usergroup =groups=
 *** usermod
@@ -78,6 +78,16 @@ sudo apt-get update && sudo apt-get install nvidia-355
 **** or
      #+BEGIN_SRC sh
        find Documents \( -name "*.py" -or -name "*.html" \)
+     #+END_SRC
+*** ldd
+    #+BEGIN_SRC sh
+      # inspect all the shared library depend on
+      ldd libxx.so
+    #+END_SRC
+*** ar
+**** list content in static library =*.a=
+     #+BEGIN_SRC sh
+       ar -t xx.a
      #+END_SRC
 ** Tmux Note
 *** =tmux= plugin installation
@@ -1265,24 +1275,23 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 ** OSX
 *** lsof
 #+BEGIN_SRC sh
-  lsof -i TCP:port -n 
-  lsof -i UDP:port -n
-＃ listen ports
-lsof -iTCP -sTCP:LISTEN -n -P
-lsof -i -n -P | grep -i listen
+#  lsof -i TCP:port -n 
+#  lsof -i UDP:port -n
+#  listen ports
+ lsof -iTCP -sTCP:LISTEN -n -P
+#  lsof -i -n -P | grep -i listen
 #+END_SRC
 
 #+RESULTS:
-| COMMAND |  PID | USER    | FD  | TYPE |             DEVICE | SIZE/OFF | NODE | NAME    |          |
-| Papers  |  448 | zhangli | 45u | IPv4 | 0x96671a7181200663 | 0t0      | TCP  | *:17320 | (LISTEN) |
-| Papers  |  448 | zhangli | 47u | IPv6 | 0x96671a716df4a343 | 0t0      | TCP  | *:17320 | (LISTEN) |
-| Alfred  | 1220 | zhangli | 4u  | IPv4 | 0x96671a71837b7663 | 0t0      | TCP  | *:57353 | (LISTEN) |
-| Alfred  | 1220 | zhangli | 7u  | IPv6 | 0x96671a716df49883 | 0t0      | TCP  | *:57353 | (LISTEN) |
-| Papers  |  448 | zhangli | 45u | IPv4 | 0x96671a7181200663 | 0t0      | TCP  | *:17320 | (LISTEN) |
-| Papers  |  448 | zhangli | 47u | IPv6 | 0x96671a716df4a343 | 0t0      | TCP  | *:17320 | (LISTEN) |
-| Alfred  | 1220 | zhangli | 4u  | IPv4 | 0x96671a71837b7663 | 0t0      | TCP  | *:57353 | (LISTEN) |
-| Alfred  | 1220 | zhangli | 7u  | IPv6 | 0x96671a716df49883 | 0t0      | TCP  | *:57353 | (LISTEN) |
-
+| COMMAND   |   PID | USER    | FD  | TYPE |             DEVICE | SIZE/OFF | NODE | NAME           |          |
+| Papers    |   379 | zhangli | 45u | IPv4 | 0x887f450de9e1d6c3 | 0t0      | TCP  | *:17320        | (LISTEN) |
+| Papers    |   379 | zhangli | 46u | IPv6 | 0x887f450de63fe6b3 | 0t0      | TCP  | *:17320        | (LISTEN) |
+| Alfred    |   757 | zhangli | 4u  | IPv4 | 0x887f450de7cd5fbb | 0t0      | TCP  | *:57353        | (LISTEN) |
+| Alfred    |   757 | zhangli | 7u  | IPv6 | 0x887f450de63fe153 | 0t0      | TCP  | *:57353        | (LISTEN) |
+| 2BUA8C4S2 | 77681 | zhangli | 12u | IPv4 | 0x887f450de7cd7aa3 | 0t0      | TCP  | 127.0.0.1:6258 | (LISTEN) |
+| 2BUA8C4S2 | 77681 | zhangli | 14u | IPv6 | 0x887f450debc0b153 | 0t0      | TCP  | [::1]:6258     | (LISTEN) |
+| 2BUA8C4S2 | 77681 | zhangli | 16u | IPv4 | 0x887f450deb8a8fbb | 0t0      | TCP  | 127.0.0.1:6263 | (LISTEN) |
+| 2BUA8C4S2 | 77681 | zhangli | 17u | IPv6 | 0x887f450debc0d6f3 | 0t0      | TCP  | [::1]:6263     | (LISTEN) |
 *** brew
     #+BEGIN_SRC sh :results output
       brew info imagemagick
@@ -2305,3 +2314,6 @@ another class. Once you assign a pointer, you can call
 functions/methods in that class. Hence some functions of your class
 are "delegated" (In C++ world - pointer to by a class object pointer)
 to another class. 
+** Sublime Text
+**** show line number
+     - preference -> add "line_numbers": true
