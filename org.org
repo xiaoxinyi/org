@@ -1,3 +1,6 @@
+#+TOC: nil
+#+TITLE: Tutorial
+#+AUTHOR: Zhang Li
 * Tutorial
 ** Paper Reading
 *** Deep learning
@@ -888,6 +891,17 @@ Out[3]: 2
 *** TODO [[https://github.com/soumith/convnet-benchmarks][convnet benchmarks]]
     SCHEDULED: <2016-09-09 Fri>
 ** Emacs Notes
+*** =emacs -q=
+    Initalize only one package
+
+    #+BEGIN_SRC elisp
+      (package-initialize)
+
+      (eval-when-compile
+        (require 'use-package))
+    #+END_SRC
+
+    Then set that package configuration with =use-package=
 *** =elpy=
 **** use-package =elpy=
 #+BEGIN_SRC lisp
@@ -1060,7 +1074,21 @@ print(sys.version)
 #+RESULTS:
 : 3.5.1 |Anaconda 4.0.0 (x86_64)| (default, Dec  7 2015, 11:24:55) 
 : [GCC 4.2.1 (Apple Inc. build 5577)]
-
+*** show all the properties in this =org= buffer
+    #+BEGIN_SRC elisp
+      ;; Definition of `org-global-props' that could go into your init file:
+      (defun org-global-props (&optional property buffer)
+        "Get the plists of global org properties of current buffer."
+        (unless property (setq property "PROPERTY"))
+        (with-current-buffer (or buffer (current-buffer))
+          (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;; Stuff for your org-file:
+      (mapcar (lambda (prop)
+            (list (org-element-property :key prop)
+              (org-element-property :value prop)))
+          (org-global-props "\\(AUTHOR\\|TITLE\\|XYZ\\|TOC\\)"))
+    #+END_SRC
 ** Python Note
 *** sample from an nd-array
 #+BEGIN_SRC python
@@ -1070,9 +1098,10 @@ numpy.random.choice(range(vocab_size), p=p.ravel())
 *** install package anaconda ubuntu
 #+BEGIN_SRC sh
 cd ~/anaconda2/bin
-su
+
 ./pip install package
 #+END_SRC
+
 *** =sum= to keepdim
 #+BEGIN_SRC python
 np.sum(array, axis=0, keepdims=True)
@@ -1125,6 +1154,12 @@ ubuntu: /etc/default/docker
 #+BEGIN_SRC example
 DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5000
 #+END_SRC
+
+#+BEGIN_SRC sh
+  sudo echo "DOCKER_OPTS=\"\$DOCKER_OPTS --registry-mirror=http://hub-mirror.c.163.com\"" >> /etc/default/docker
+
+  service docker restart
+#+END_SRC
 *** docker push
     unauthorized: authentication required
     sudo docker login --username=xiaoxinyi
@@ -1139,6 +1174,7 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5
       docker ps -a | grep Exited | cut -d ' ' -f 1 | xargs docker rm
     #+END_SRC
 *** save and load image
+
     #+BEGIN_SRC sh
       # Get image id by doing:
       sudo docker images
@@ -1151,6 +1187,15 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5
       # Copy image from path to any host Now import to your local docker using :
       sudo docker load -i <path to copied image file>
     #+END_SRC
+
+**** difference between =save=, =load= and =export=, =import= 
+     - [[http://tuhrig.de/difference-between-save-and-export-in-docker/][difference-between-save-and-export-in-docker blog]]
+     - [[http://stackoverflow.com/questions/22655867/what-is-the-difference-between-save-and-export-in-docker/22656763#22656763][stackoverflow]]
+*** dockerfile
+**** =RUN= and =CMD=
+     To clarify: an example for =CMD= would be running an application
+     upon creation of a container which is already installed using =RUN=
+     (e.g. =RUN apt-get install= …) inside the image. 
 ** Proxy
 *** proxychains
 #+BEGIN_SRC sh
