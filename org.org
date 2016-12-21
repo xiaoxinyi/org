@@ -1004,6 +1004,26 @@ gcc -xc++ -E -v -
        (add-hook 'lua-mode-hook 'hs-minor-mode)
 
      #+END_SRC
+*** replace =yes= to =y=
+
+    #+BEGIN_SRC elisp
+      (fset 'yes-or-no-p 'y-or-n-p)
+    #+END_SRC
+
+*** =flycheck-mode=
+**** include directory path
+
+***** [[http://stackoverflow.com/questions/24097839/how-to-add-include-path-to-flycheck-c-c-clang][How to add include path to flycheck c/c++-clang? (stackoverflow)]]
+      #+BEGIN_SRC elisp
+        (add-hook 'c++-mode-hook
+                  (lambda () (setq flycheck-clang-include-path
+                               (list (expand-file-name "~/Desktop/DeepAR_Algorithm/include")))))
+
+        (add-hook 'c-mode-hook
+                  (lambda () (setq flycheck-clang-include-path
+                               (list (expand-file-name "~/Desktop/DeepAR_Algorithm/include")))))
+      #+END_SRC
+
 *** install on =OSX=
     #+BEGIN_SRC sh
       brew install --with-cocoa --srgb --with-x  emacs
