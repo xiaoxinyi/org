@@ -1049,6 +1049,11 @@ Out[3]: 2
     3. =C-x r m= set bookmark for this virtual dired buffer.
 
     4. =C-x r l= list all the bookmarks. =C-x r b= jump to the bookmark.
+*** =winner mode=
+**** key binding
+     - =C-c <left>= window layout undo
+
+     - =C-c <right>= window layout redo
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
