@@ -910,13 +910,16 @@ Out[3]: 2
 #+END_SRC
 **** elpy send function definition =C-M-x=
 *** =ac-c-headers= locate =c= headers
-#+BEGIN_SRC sh
-gcc -xc++ -E -v -
-#+END_SRC
-#+BEGIN_SRC elisp
-  (add-to-list achead:include-directories "/usr/include")
-#+END_SRC
-*** [[http://tuhdo.github.io/][tutorial]]
+
+    #+BEGIN_SRC sh
+      gcc -xc++ -E -v -
+    #+END_SRC
+
+    #+BEGIN_SRC elisp
+      (add-to-list achead:include-directories "/usr/include")
+    #+END_SRC
+*** emacs tutorial
+**** [[http://tuhdo.github.io/][tutorial]]
 *** etags
     #+BEGIN_SRC sh
       find . -name "*.cpp" -print -o -name "*.h" -print | etags -  
@@ -1034,6 +1037,18 @@ gcc -xc++ -E -v -
 **** TODO [[https://github.com/danielmai/.emacs.d/blob/master/config.org][Danielmai's]]
 **** [[https://github.com/hrs/dotfiles/blob/master/emacs.d/configuration.org][hrs]]
 **** [[https://github.com/mwfogleman/config/blob/master/home/.emacs.d/michael.org][micheal]]
+*** use =projectile= to make a bookmark
+    1. in =helm-projectile-find-file= (=C-c p f=) session, create
+       dired virtual dired buffer from file =C-c f=.
+
+    2. add files to dired buffer. =C-c p f=, =M-S-<space>= mark files
+       to be added to the dired buffer created in step 1, =M-a= to
+       mark all files. =C-c a= add
+       marked files to the virtual dired buffer.
+
+    3. =C-x r m= set bookmark for this virtual dired buffer.
+
+    4. =C-x r l= list all the bookmarks. =C-x r b= jump to the bookmark.
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
