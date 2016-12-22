@@ -1054,6 +1054,11 @@ Out[3]: 2
      - =C-c <left>= window layout undo
 
      - =C-c <right>= window layout redo
+*** =wind-move=
+**** replace =C-x o= to switch buffer to buffer
+**** key binding
+     - =S-<left>= move to left buffer
+
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
