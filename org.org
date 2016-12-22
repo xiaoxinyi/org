@@ -902,6 +902,40 @@ Out[3]: 2
     #+END_SRC
 
     Then set that package configuration with =use-package=
+*** =autoload=
+    Instead of installing a function by loading the file that contains
+    it, or by evaluating the function definition, you can make the
+    function available but not actually install it until it is first
+    called. This is called autoloading.
+
+    When you execute an autoloaded function, Emacs automatically
+    evaluates the file that contains the definition, and then calls
+    the function. 
+
+    Emacs starts quicker with autoloaded functions, since their
+    libraries are not loaded right away; but you need to wait a moment
+    when you first use such a function, while its containing file is
+    evaluated.
+**** example
+
+     #+BEGIN_SRC elisp
+       (autoload 'html-helper-mode
+         "html-helper-mode" "Edit HTML documents" t)
+     #+END_SRC
+
+     This expression autoloads the html-helper-mode function. It takes
+     it from the =html-helper-mode.el= file (or from the byte compiled
+     version =html-helper-mode.elc=, if that exists.) The file must be
+     located in a directory specified by =load-path=. The documentation
+     says that this is a mode to help you edit documents written in
+     the HyperText Markup Language. You can call this mode
+     interactively by typing =M-x html-helper-mode=. (You need to
+     duplicate the function’s regular documentation in the autoload
+     expression because the regular function is not yet loaded, so its
+     documentation is not available.)
+
+**** reference
+     - [[https://www.gnu.org/software/emacs/manual/html_node/eintr/Autoload.html][manual]]
 *** =elpy=
 **** use-package =elpy=
 #+BEGIN_SRC lisp
@@ -1058,7 +1092,72 @@ Out[3]: 2
 **** replace =C-x o= to switch buffer to buffer
 **** key binding
      - =S-<left>= move to left buffer
+*** =buffer-move=
+**** move buffer to right/left/up/down
+     - =C-s-left= =(buf-move-left)=
+*** =use-package=
+    - =use-package= declaration
 
+      This loads in the package =foo=, but only if =foo= is available on
+      your system. If not, a warning is logged to the *Messages*
+      buffer.
+
+      #+BEGIN_SRC elisp
+        (use-package foo)
+      #+END_SRC
+        
+    - =init= keyword to execute code before a package is loaded.
+
+    - =:config= can be used to execute code after a package is loaded.
+
+    - example of using =commands= along with =init=
+      
+      #+BEGIN_SRC elisp
+        (use-package color-moccur
+          :commands (isearch-moccur isearch-all)
+          :bind (("M-s O" . moccur)
+                 :map isearch-mode-map
+                 ("M-o" . isearch-moccur)
+                 ("M-O" . isearch-moccur-all))
+          :init
+          (setq isearch-lazy-highlight t)
+          :config
+          (use-package moccur-edit))
+      #+END_SRC
+          
+      In this case, I want to autoload the commands =isearch-moccur=
+      and =isearch-all= from =color-moccur.el=, and bind keys both at the
+      global level and within the =isearch-mode-map= (see next
+      section). When the package is actually loaded (by using one of
+      these commands), =moccur-edit= is also loaded, to allow editing of
+      the moccur buffer.
+
+    - keybinding =M-x describe-personal-keybindings=
+
+      #+BEGIN_SRC elisp
+        (use-package ace-jump-mode
+          :bind ("C-." . ace-jump-mode))
+      #+END_SRC
+
+      This does two things: first, it creates an autoload for
+      theace-jump-mode command and defers loading of ace-jump-mode
+      until you actually use it. Second, it binds the key C-. to that
+      command. After loading, you can use =M-x=
+      =describe-personal-keybindings= to see all such keybindings 
+          
+      #+BEGIN_SRC elisp
+        (use-package ace-jump-mode
+          :commands ace-jump-mode
+          :init
+          (bind-key "C-." 'ace-jump-mode))
+      #+END_SRC
+
+      When you use the =:commands= keyword, it creates autoloads for
+      those commands and defers loading of the module until they are
+      used. Since the =:init= form is always run -- even if
+      ace-jump-mode might not be on your system.
+
+    -
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
