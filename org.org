@@ -1,4 +1,3 @@
-#+TOC: nil
 #+TITLE: Tutorial
 #+AUTHOR: Zhang Li
 * Tutorial
@@ -891,17 +890,49 @@ Out[3]: 2
 *** TODO [[https://github.com/soumith/convnet-benchmarks][convnet benchmarks]]
     SCHEDULED: <2016-09-09 Fri>
 ** Emacs Notes
+*** Print the emacs package name that a function belongs to
+    
+    #+BEGIN_SRC elisp
+      (find-lisp-object-file-name 'find-function nil)
+    #+END_SRC
+
+    #+RESULTS:
+    : /usr/local/Cellar/emacs/25.1/share/emacs/25.1/lisp/emacs-lisp/find-func.el
+
 *** =emacs -q=
     Initalize only one package
 
     #+BEGIN_SRC elisp
+      (setq package-load-list '((yasnippet t)
+                    (use-package t)
+                    (bind-key t)
+                    (diminish t)
+                    ))
+
       (package-initialize)
 
       (eval-when-compile
         (require 'use-package))
+
     #+END_SRC
 
     Then set that package configuration with =use-package=
+*** =yas-snippets=
+**** configuration with =use-package=
+     #+BEGIN_SRC elisp
+       (use-package yasnippet
+         :bind (("<backtab>" . yas-expand))
+         :config
+         (yas-global-mode 1)
+         (setq yas-snippet-dirs
+           '("~/.emacs.d/snippets"))
+         )
+     #+END_SRC
+
+**** enable snippets globally
+     Save the snippet under =~/.emacs.d/snippets/fundamental-mode/=, and
+     also add a =~/.emacs.d/snippets/prog-mode/.yas-parents= file with
+     contents =fundamental-mode=. 
 *** =autoload=
     Instead of installing a function by loading the file that contains
     it, or by evaluating the function definition, you can make the
@@ -1157,7 +1188,69 @@ Out[3]: 2
       used. Since the =:init= form is always run -- even if
       ace-jump-mode might not be on your system.
 
-    -
+    - =:map= bind local keymap
+
+      #+BEGIN_SRC elisp
+        (use-package helm
+          :bind (:map helm-command-map
+                 ("C-c h" . helm-execute-persistent-action)))
+      #+END_SRC
+
+      The effect of this statement is to wait until helm has loaded,
+      and then to bind the key =C-c h= to =helm-execute-persistent-action=
+      within Helm's local keymap, =helm-mode-map=
+
+    - =:defer= autoload
+      
+      If you aren't using =:commands=, =:bind=, =:bind*=, =:bind-keymap=,
+      =:bind-keymap*=, =:mode=, or =:interpreter= (all of which imply
+      :defer; see the docstring for =use-package= for a brief
+      description of each), you can still defer loading with the
+      :defer keyword.
+
+      #+BEGIN_SRC elisp
+        (use-package ace-jump-mode
+          :defer t
+          :init
+          (autoload 'ace-jump-mode "ace-jump-mode" nil t)
+          (bind-key "C-." 'ace-jump-mode))
+      #+END_SRC
+
+      This does exactly the same thing as the following:
+
+      #+BEGIN_SRC elisp
+        (use-package ace-jump-mode
+          :bind ("C-." . ace-jump-mode))
+      #+END_SRC
+
+    - mode and interpreter
+
+      Similar to =:bind=, you can use =:mode= and =:interpreter= to
+      establish a deferred binding within the =auto-mode-alist= and
+      =interpreter-mode-alist= variables. The specifier to either
+      keyword can be a cons cell, a list, or just a string: 
+
+      #+BEGIN_SRC elisp
+        use-package ruby-mode
+          :mode "\\.rb\\'"
+          :interpreter "ruby")
+
+        ;; The package is "python" but the mode is "python-mode":
+        (use-package python
+          :mode ("\\.py\\'" . python-mode)
+          :interpreter ("python" . python-mode))
+      #+END_SRC
+
+      In almost all cases you don't need to manually specify =:defer=
+      t. This is implied whenever =:bind= or =:mode= or =:interpreter= is
+      used. 
+
+    - =:disable=
+
+      The =:disabled= keyword can turn off a module you're having
+      difficulties with.
+
+    - 
 ** =Org-mode= Note
 *** move item up/down =M-up= =org-metaup=
 *** change all level to next level =M-shift-left=
@@ -1173,7 +1266,7 @@ Out[3]: 2
 **** [[http://orgmode.org/worg/org-tutorials/org-latex-preview.html][latex configuration]]
 **** =C-c C-x C-l= latex preview in org
 **** latex =tangle=
-#+BEGIN_SRC latex :tangle example.tex
+#+BEGIN_SRC latex =:tangle= example.tex
   \documentclass{article}
 
   \begin{document}
@@ -1206,17 +1299,17 @@ Out[3]: 2
     #+END_SRC
 *** babel-language
 **** custom interpreter
-#+begin_src emacs-lisp :results none
+#+begin_src emacs-lisp =:results= none
 (setq org-babel-python-command "python3")
 #+end_src
 
-#+begin_src python :results output
+#+begin_src python =:results= output
 import sys
 print(sys.version)
 #+end_src
 
 #+RESULTS:
-: 3.5.1 |Anaconda 4.0.0 (x86_64)| (default, Dec  7 2015, 11:24:55) 
+: 3.5.1 |Anaconda 4.0.0 (x86_64)| (default, Dec  7 2015, 11=:24==:55=) 
 : [GCC 4.2.1 (Apple Inc. build 5577)]
 *** show all the properties in this =org= buffer
     #+BEGIN_SRC elisp
@@ -1225,12 +1318,12 @@ print(sys.version)
         "Get the plists of global org properties of current buffer."
         (unless property (setq property "PROPERTY"))
         (with-current-buffer (or buffer (current-buffer))
-          (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
+          (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property =:key= el)) el)))))
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;; Stuff for your org-file:
       (mapcar (lambda (prop)
-            (list (org-element-property :key prop)
-              (org-element-property :value prop)))
+            (list (org-element-property =:key= prop)
+              (org-element-property =:value= prop)))
           (org-global-props "\\(AUTHOR\\|TITLE\\|XYZ\\|TOC\\)"))
     #+END_SRC
 ** Python Note
@@ -1272,6 +1365,10 @@ array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
 #+END_SRC
 *** [[https://pyformat.info/][python string format]]
+*** install =opencv-python=
+    #+BEGIN_SRC sh
+      sudo apt-get install python-opencv libopencv-dev
+    #+END_SRC
 ** Ipython Note
 *** ipython config
     #+BEGIN_SRC sh
@@ -1296,7 +1393,7 @@ array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
 *** docker sourcelist
 ubuntu: /etc/default/docker 
 #+BEGIN_SRC example
-DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5000
+DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com=:5000=
 #+END_SRC
 
 #+BEGIN_SRC sh
@@ -1345,7 +1442,7 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com:5
 #+BEGIN_SRC sh
 sudo apt-get install -y proxychains
 sudo cat "socks5  127.0.0.1 9999" >> /etc/proxychains.conf
-ssh -p 1022  -fN -D 127.0.0.1:9999 root@192.168.199.1
+ssh -p 1022  -fN -D 127.0.0.1=:9999= root@192.168.199.1
 proxychains curl www.google.co.jp
 #+END_SRC
 ** Cuda Note
@@ -1357,42 +1454,53 @@ grid of blocks : bx * by * bz
 block of threads : tx * ty * tz
 shared memory per block in bytes
 *** Convert color to black and white
-I = (R + G + B) / 3
-I = .299f * R + .587f * G + .114f * B
+    I = (R + G + B) / 3
+
+    I = .299f * R + .587f * G + .114f * B
 *** [[http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#cuda-programming-model][ =nvcc= introduction]]
 *** cs344 Note
-- GPU is responsible for allocating blocks to SM(streaming multiprocessors)
-- A block cannot run on more than one SM
-- An SM may run more than one block
-- All the SMs are running in parallel
-- Threads in different block shouldn't cooperate
-- Cuda make few guarantees about when and where thread blocks will run
-- consequences
-  + no assumptions blocks -> SM
-  + no communication between blocks
-- CUDA guarantees that:
-  + all threads in a block run on the same SM at the same time
-  + all blocks in a kernel finish before any blocks from next run
-- threadIdx : thread within block threadIdx.x threadIdx.y
-  + blockDim : size of block
-  + blockIdx : block within grid
-  + gridDim : size of grid
+     - GPU is responsible for allocating blocks to SM(streaming multiprocessors)
+  
+     - A block cannot run on more than one SM
+
+     - An SM may run more than one block
+
+     - All the SMs are running in parallel
+
+     - Threads in different block shouldn't cooperate
+       
+     - Cuda make few guarantees about when and where thread blocks will run
+       
+     - consequences
+         + no assumptions blocks -> SM
+         + no communication between blocks
+
+     - CUDA guarantees that:
+         + all threads in a block run on the same SM at the same time
+         + all blocks in a kernel finish before any blocks from next run
+     
+     - threadIdx : thread within block threadIdx.x threadIdx.y
+         + blockDim : size of block
+         + blockIdx : block within grid
+         + gridDim : size of grid
 *** GPU memory model
-[[./images/gpu-memory-model.png]]
-  * All threads from a block can access the same variable in that
-    block shared memory
-  * Threads from two different blocks can access the same variable in
-    global memory
-  * Threads from different blocks have their own copy of local
-    variables in local memory
-  * Threads from the same block have their own copy of local variables
-    in local memory
+
+    [[./images/gpu-memory-model.png]]
+
+  * All threads from a block can access the same variable in that block shared memory
+
+  * Threads from two different blocks can access the same variable in global memory
+
+  * Threads from different blocks have their own copy of local variables in local memory
+
+  * Threads from the same block have their own copy of local variables in local memory
 
 *** barrier
 point in program where threads stop and wait. when all threads have
 reached the barrier, they can proceed.
 [[./images/synchronized.png]]
 *** High-level strategies
+
 1. Maximize arithmetic intensity
 \[\frac{Math}{Memory}\]
   - maximize compute ops per thread
@@ -1404,18 +1512,19 @@ coalesce memeory
 2. avoid thread divergence
 
 *** =cudaMalloc=
+
     #+BEGIN_SRC c++
       float *device_data=NULL;  
       size_t size = 1024*sizeof(float);  
       cudaMalloc((void**)&device_data, size);  
     #+END_SRC
-而device_data这个指针是存储在主存上的。之所以取device_data的地址，是为
-了将cudaMalloc在显存上获得的数组首地址赋值给device_data。在函数中为形
-参赋值是不会在实参中繁盛变化的，但是指针传递的是地址 
+
+    而 =device_data= 这个指针是存储在主存上的。之所以取 =device_data= 的地
+    址，是为了将 =cudaMalloc= 在显存上获得的数组首地址赋值给 =device_data=
+    。在函数中为形参赋值是不会在实参中繁盛变化的，但是指针传递的是地址
 
 *** TODO [[/Users/zhangli/Documents/Library.papers3/Files/1E/1ED49076-5D40-4E5F-B232-918B17EA1596.pdf][What Every Programmer Should Know About Memory]]
     SCHEDULED: <2016-08-27 Sat>
-
 
 
 
@@ -1463,26 +1572,26 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 
 ** OSX
 *** lsof
-#+BEGIN_SRC sh
-#  lsof -i TCP:port -n 
-#  lsof -i UDP:port -n
-#  listen ports
- lsof -iTCP -sTCP:LISTEN -n -P
-#  lsof -i -n -P | grep -i listen
-#+END_SRC
+    #+BEGIN_SRC sh
+      #  lsof -i TCP=:port= -n 
+      #  lsof -i UDP=:port= -n
+      #  listen ports
+      # lsof -iTCP -sTCP=:LISTEN= -n -P
+      lsof -i -n -P | grep -i listen
+    #+END_SRC
 
-#+RESULTS:
-| COMMAND   |   PID | USER    | FD  | TYPE |             DEVICE | SIZE/OFF | NODE | NAME           |          |
-| Papers    |   379 | zhangli | 45u | IPv4 | 0x887f450de9e1d6c3 | 0t0      | TCP  | *:17320        | (LISTEN) |
-| Papers    |   379 | zhangli | 46u | IPv6 | 0x887f450de63fe6b3 | 0t0      | TCP  | *:17320        | (LISTEN) |
-| Alfred    |   757 | zhangli | 4u  | IPv4 | 0x887f450de7cd5fbb | 0t0      | TCP  | *:57353        | (LISTEN) |
-| Alfred    |   757 | zhangli | 7u  | IPv6 | 0x887f450de63fe153 | 0t0      | TCP  | *:57353        | (LISTEN) |
-| 2BUA8C4S2 | 77681 | zhangli | 12u | IPv4 | 0x887f450de7cd7aa3 | 0t0      | TCP  | 127.0.0.1:6258 | (LISTEN) |
-| 2BUA8C4S2 | 77681 | zhangli | 14u | IPv6 | 0x887f450debc0b153 | 0t0      | TCP  | [::1]:6258     | (LISTEN) |
-| 2BUA8C4S2 | 77681 | zhangli | 16u | IPv4 | 0x887f450deb8a8fbb | 0t0      | TCP  | 127.0.0.1:6263 | (LISTEN) |
-| 2BUA8C4S2 | 77681 | zhangli | 17u | IPv6 | 0x887f450debc0d6f3 | 0t0      | TCP  | [::1]:6263     | (LISTEN) |
+    #+RESULTS:
+    | Papers    |   379 | zhangli | 45u | IPv4 | 0x887f450de9e1d6c3 | 0t0 | TCP | *:17320        | (LISTEN) |
+    | Papers    |   379 | zhangli | 46u | IPv6 | 0x887f450de63fe6b3 | 0t0 | TCP | *:17320        | (LISTEN) |
+    | Alfred    |   757 | zhangli | 4u  | IPv4 | 0x887f450de7cd5fbb | 0t0 | TCP | *:57353        | (LISTEN) |
+    | Alfred    |   757 | zhangli | 7u  | IPv6 | 0x887f450de63fe153 | 0t0 | TCP | *:57353        | (LISTEN) |
+    | 2BUA8C4S2 | 77681 | zhangli | 12u | IPv4 | 0x887f450de7cd7aa3 | 0t0 | TCP | 127.0.0.1:6258 | (LISTEN) |
+    | 2BUA8C4S2 | 77681 | zhangli | 14u | IPv6 | 0x887f450debc0b153 | 0t0 | TCP | [::1]:6258     | (LISTEN) |
+    | 2BUA8C4S2 | 77681 | zhangli | 16u | IPv4 | 0x887f450deb8a8fbb | 0t0 | TCP | 127.0.0.1:6263 | (LISTEN) |
+    | 2BUA8C4S2 | 77681 | zhangli | 17u | IPv6 | 0x887f450debc0d6f3 | 0t0 | TCP | [::1]:6263     | (LISTEN) |
+
 *** brew
-    #+BEGIN_SRC sh :results output
+    #+BEGIN_SRC sh =:results= output
       brew info imagemagick
     #+END_SRC
 
@@ -1492,11 +1601,11 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
     Tools and libraries to manipulate images in many formats
     https://www.imagemagick.org/
     /usr/local/Cellar/imagemagick/6.9.1-10 (1,450 files, 17.5M)
-      Poured from bottle on 2015-07-27 at 00:10:58
+      Poured from bottle on 2015-07-27 at 00=:10==:58=
     /usr/local/Cellar/imagemagick/6.9.5-9_2 (1,468 files, 25M)
-      Built from source on 2016-09-19 at 20:04:41 with: --with-x11
+      Built from source on 2016-09-19 at 20=:04==:41= with: --with-x11
     /usr/local/Cellar/imagemagick/6.9.6-2 (1,469 files, 25M) *
-      Built from source on 2016-10-31 at 10:43:46 with: --with-x11
+      Built from source on 2016-10-31 at 10=:43==:46= with: --with-x11
     From: https://github.com/Homebrew/homebrew-core/blob/master/Formula/imagemagick.rb
     ==> Dependencies
     Build: pkg-config
@@ -1644,19 +1753,19 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
          local function block(...)
             local arg = {...}
             local no = arg[2]
-            model:add(nn.SpatialConvolution(...))
-            model:add(nn.SpatialBatchNormalization(no,1e-3))
-            model:add(nn.ReLU(true))
-            model:add(nn.SpatialConvolution(no, no, 1, 1, 1, 1, 0, 0))
-            model:add(nn.SpatialBatchNormalization(no,1e-3))
-            model:add(nn.ReLU(true))
-            model:add(nn.SpatialConvolution(no, no, 1, 1, 1, 1, 0, 0))
-            model:add(nn.SpatialBatchNormalization(no,1e-3))
-            model:add(nn.ReLU(true))
+            model=:add=(nn.SpatialConvolution(...))
+            model=:add=(nn.SpatialBatchNormalization(no,1e-3))
+            model=:add=(nn.ReLU(true))
+            model=:add=(nn.SpatialConvolution(no, no, 1, 1, 1, 1, 0, 0))
+            model=:add=(nn.SpatialBatchNormalization(no,1e-3))
+            model=:add=(nn.ReLU(true))
+            model=:add=(nn.SpatialConvolution(no, no, 1, 1, 1, 1, 0, 0))
+            model=:add=(nn.SpatialBatchNormalization(no,1e-3))
+            model=:add=(nn.ReLU(true))
          end
 
          local function mp(...)
-            model:add(nn.SpatialMaxPooling(...))
+            model=:add=(nn.SpatialMaxPooling(...))
          end
 
          block(3, 96, 11, 11, 4, 4, 5, 5)
@@ -1667,15 +1776,15 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
          mp(3, 3, 2, 2, 1, 1)
          block(384, 1024, 3, 3, 1, 1, 1, 1)
 
-         model:add(nn.SpatialAveragePooling(7, 7, 1, 1))
-         model:add(nn.View(-1):setNumInputDims(3))
-         model:add(nn.Linear(1024,1000))
-         model:add(nn.LogSoftMax())
+         model=:add=(nn.SpatialAveragePooling(7, 7, 1, 1))
+         model=:add=(nn.View(-1)=:setNumInputDims=(3))
+         model=:add=(nn.Linear(1024,1000))
+         model=:add=(nn.LogSoftMax())
 
          model.imageSize = 256
          model.imageCrop = 224
 
-         return model:cuda()
+         return model=:cuda=()
       end
     #+END_SRC
 *** TODO resnet torch 
@@ -1705,7 +1814,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 
        loaded = torch.load(train_file,'ascii')
        trainData = {
-          data = loaded.X:transpose(3,4),
+          data = loaded.X=:transpose=(3,4),
           labels = loaded.y[1],
           size = function() return trsize end
        }
@@ -1717,11 +1826,11 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
        image_name = paths.basename('Goldfish3.jpg')
        print(image_name)
        im = image.load(image_name)
-       im = image.scale(im, 224, 224):double()
+       im = image.scale(im, 224, 224)=:double=()
        itorch.image(im)
        im = torch.reshape(im, 1, 3, 224, 224)
        itorch.image(im)
-       print(im:size())
+       print(im=:size=())
      #+END_SRC
 **** rescale and normalize the image globally
      #+BEGIN_SRC lua
@@ -1730,20 +1839,20 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
          -- rescale the image
          local im3 = image.scale(im,224,224,'bilinear')
          -- subtract imagenet mean and divide by std
-         for i=1,3 do im3[i]:add(-img_mean.mean[i]):div(img_mean.std[i]) end
+         for i=1,3 do im3[i]=:add=(-img_mean.mean[i])=:div=(img_mean.std[i]) end
          return im3
        end
 
-       I = preprocess(im, net.transform):float()
+       I = preprocess(im, net.transform)=:float=()
        itorch.image(I)
      #+END_SRC
 **** colorspace RGB -> YUV
      #+BEGIN_SRC lua
        print '==> preprocessing data: colorspace RGB -> YUV'
-       for i = 1,trainData:size() do
+       for i = 1,trainData=:size=() do
           trainData.data[i] = image.rgb2yuv(trainData.data[i])
        end
-       for i = 1,testData:size() do
+       for i = 1,testData=:size=() do
           testData.data[i] = image.rgb2yuv(testData.data[i])
        end
      #+END_SRC
@@ -1757,15 +1866,15 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 
        -- Define our local normalization operator (It is an actual nn module, 
        -- which could be inserted into a trainable model):
-       normalization = nn.SpatialContrastiveNormalization(1, neighborhood, 1):float()
+       normalization = nn.SpatialContrastiveNormalization(1, neighborhood, 1)=:float=()
 
        -- Normalize all channels locally:
        for c in ipairs(channels) do
-          for i = 1,trainData:size() do
-             trainData.data[{ i,{c},{},{} }] = normalization:forward(trainData.data[{ i,{c},{},{} }])
+          for i = 1,trainData=:size=() do
+             trainData.data[{ i,{c},{},{} }] = normalization=:forward=(trainData.data[{ i,{c},{},{} }])
           end
-          for i = 1,testData:size() do
-             testData.data[{ i,{c},{},{} }] = normalization:forward(testData.data[{ i,{c},{},{} }])
+          for i = 1,testData=:size=() do
+             testData.data[{ i,{c},{},{} }] = normalization=:forward=(testData.data[{ i,{c},{},{} }])
           end
        end
      #+END_SRC
@@ -1777,11 +1886,11 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
        -- normalized.
 
        for i,channel in ipairs(channels) do
-          trainMean = trainData.data[{ {},i }]:mean()
-          trainStd = trainData.data[{ {},i }]:std()
+          trainMean = trainData.data[{ {},i }]=:mean=()
+          trainStd = trainData.data[{ {},i }]=:std=()
 
-          testMean = testData.data[{ {},i }]:mean()
-          testStd = testData.data[{ {},i }]:std()
+          testMean = testData.data[{ {},i }]=:mean=()
+          testStd = testData.data[{ {},i }]=:std=()
 
           print('training data, '..channel..'-channel, mean: ' .. trainMean)
           print('training data, '..channel..'-channel, standard deviation: ' .. trainStd)
@@ -1816,8 +1925,8 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
        #+BEGIN_SRC lua
           -- preprocess trainSet
            local normalization = nn.SpatialContrastiveNormalization(1, image.gaussian1D(7))
-           for i = 1,trainData:size() do
-              xlua.progress(i, trainData:size())
+           for i = 1,trainData=:size=() do
+              xlua.progress(i, trainData=:size=())
               -- rgb -> yuv
               local rgb = trainData.data[i]
               local yuv = image.rgb2yuv(rgb)
@@ -1826,38 +1935,38 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
               trainData.data[i] = yuv
            end
            -- normalize u globally:
-           local mean_u = trainData.data:select(2,2):mean()
-           local std_u = trainData.data:select(2,2):std()
-           trainData.data:select(2,2):add(-mean_u)
-           trainData.data:select(2,2):div(std_u)
+           local mean_u = trainData.data=:select=(2,2)=:mean=()
+           local std_u = trainData.data=:select=(2,2)=:std=()
+           trainData.data=:select=(2,2)=:add=(-mean_u)
+           trainData.data=:select=(2,2)=:div=(std_u)
            -- normalize v globally:
-           local mean_v = trainData.data:select(2,3):mean()
-           local std_v = trainData.data:select(2,3):std()
-           trainData.data:select(2,3):add(-mean_v)
-           trainData.data:select(2,3):div(std_v)
+           local mean_v = trainData.data=:select=(2,3)=:mean=()
+           local std_v = trainData.data=:select=(2,3)=:std=()
+           trainData.data=:select=(2,3)=:add=(-mean_v)
+           trainData.data=:select=(2,3)=:div=(std_v)
        #+END_SRC
 **** tools
 ***** [[http://www.imagemagick.org/script/convert.php][convert tool]]
 *** Tensor note
-**** =Tensor:t()=
-     #+BEGIN_SRC emacs-lisp :results none
+**** =Tensor=:t=()=
+     #+BEGIN_SRC emacs-lisp =:results= none
        (setq org-babel-lua-command "th")
      #+END_SRC
 
 
-     #+BEGIN_SRC lua :results output
+     #+BEGIN_SRC lua =:results= output
        -- torch = require('torch')
 
-       x = torch.Tensor(2,3):fill(1)
+       x = torch.Tensor(2,3)=:fill=(1)
 
        -- x is contiguous, so y points to the same thing
-       y = x:contiguous():fill(2)
+       y = x=:contiguous=()=:fill=(2)
 
        print(x)
        print(y)
 
-       -- x:t() is not contiguous, so z is a clone
-       z = x:t():contiguous():fill(3.14)
+       -- x=:t=() is not contiguous, so z is a clone
+       z = x=:t=()=:contiguous=()=:fill=(3.14)
 
        print(x)
        print(z)
@@ -1908,7 +2017,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 #+end_example
 
 **** =index(dim, index)=
-     #+BEGIN_SRC lua :results output 
+     #+BEGIN_SRC lua =:results= output 
        -- [[
        -- Returns a new Tensor which indexes the given tensor along dimension dim and using the entries in torch.LongTensor index. The returned tensor has the same number of dimensions as the original tensor. The returned tensor does not use the same storage as the original tensor.
        -- ]]
@@ -1917,10 +2026,10 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
        x = torch.rand(5, 5)
        print(x)
 
-       y = x:index(1, torch.LongTensor{3, 1})
+       y = x=:index=(1, torch.LongTensor{3, 1})
        print(y)
 
-       y:fill(1)
+       y=:fill=(1)
 
        print(y)
        print(x)
@@ -1988,7 +2097,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
     当你通过键来访问 =table= 的时候，如果这个键没有值，那么 =Lua= 就会
     寻找该 =table= 的 =metatable= （假定有 =metatable= ）中的 =__index= 键。
     如果 =__index= 包含一个表格， =Lua= 会在表格中查找相应的键。 
-    #+BEGIN_SRC lua :results output
+    #+BEGIN_SRC lua =:results= output
       other = { foo = 3 }
       t = setmetatable({}, { __index = other })
       print(t.foo)
@@ -2003,7 +2112,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
     如果 =__index= 包含一个函数的话， =Lua= 就会调用那个函数， =table=
     和键会作为参数传递给函数。 =__index= 元方法查看表中元素是否存在，如果
     不存在，返回结果为 =nil= ；如果存在则由 =__index= 返回结果。
-    #+BEGIN_SRC lua :results output
+    #+BEGIN_SRC lua =:results= output
       mytable = setmetatable({key1 = "value1"}, {
         __index = function(mytable, key)
           if key == "key2" then
@@ -2029,7 +2138,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
     =__newindex= 元方法用来对表更新 =__newindex= 则用来对表访问 。
     当你给表的一个缺少的索引赋值，解释器就会查找 =__newindex= 元方法：如
     果存在则调用这个函数而不进行赋值操作。 
-    #+BEGIN_SRC lua :results output
+    #+BEGIN_SRC lua =:results= output
       mymetatable = {}
       mytable = setmetatable({key1 = "value1"}, { __newindex = mymetatable })
 
@@ -2055,7 +2164,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
     #+RESULTS:
     : new value	"4"
 
-    #+BEGIN_SRC lua :results output
+    #+BEGIN_SRC lua =:results= output
       mytable = setmetatable({key1 = "value1"}, {
         __newindex = function(mytable, key, value)
               rawset(mytable, key, "\""..value.."\"")
@@ -2069,10 +2178,10 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
       print(mytable.key1,mytable.key2)
     #+END_SRC
 *** iterate =string=
-    #+BEGIN_SRC lua :results output
+    #+BEGIN_SRC lua =:results= output
       a = 'fds.fd.ds'
 
-      for char in a:gmatch"." do
+      for char in a=:gmatch="." do
          print(char)
       end
     #+END_SRC
@@ -2095,7 +2204,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 *** ssh-key password
     * use ssh address not https
     #+BEGIN_SRC sh
-      git remote set-url origin git@github.com:yourname/yourrepo.git
+      git remote set-url origin git@github.com=:yourname=/yourrepo.git
     #+END_SRC
 *** Creating mutilple github accounts
     1. create another ssh key for a completely new account on Github
@@ -2122,7 +2231,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
        HostName github-aliyun
        User xinyixiao
        IdentifyFile ~/.ssh/xinyixiao
-    8. git remote add origin git@github-aliyun:xinyixiao/git-aliyun.git
+    8. git remote add origin git@github-aliyun=:xinyixiao=/git-aliyun.git
     9. git push origin master
 *** Fork and Pull workflow
     * The way the Fork & Pull works is that anyone can Fork a
@@ -2150,7 +2259,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 *** ssh-key password
     * use ssh address not https
     #+BEGIN_SRC sh
-      git remote set-url origin git@github.com:yourname/yourrepo.git
+      git remote set-url origin git@github.com=:yourname=/yourrepo.git
     #+END_SRC
 *** Creating mutilple github accounts
     1. create another ssh key for a completely new account on Github
@@ -2176,7 +2285,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
        HostName github-aliyun
        User xinyixiao
        IdentifyFile ~/.ssh/xinyixiao
-    8. git remote add origin git@github-aliyun:xinyixiao/git-aliyun.git
+    8. git remote add origin git@github-aliyun=:xinyixiao=/git-aliyun.git
     9. git push origin master
 *** Fork and Pull workflow
     * The way the Fork & Pull works is that anyone can Fork a
@@ -2264,7 +2373,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
      ordinary git push, but it uses qa-master as the name for the
      branch in the origin repo  
      #+BEGIN_SRC sh
-       git push origin master:refs/heads/qa-master
+       git push origin master=:refs=/heads/qa-master
      #+END_SRC
 **** non-fast-forward update remote repository
      A refspec is specified as [+]<src>:<dst>. The <src> parameter is
@@ -2275,25 +2384,25 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 **** delete remote branches 
      #+BEGIN_SRC sh
        # use refspecs for deleting remote branches
-       git push origin :some-feature
+       git push origin =:some=-feature
        git push origin --delete some-feature
      #+END_SRC
 **** fetch specific branched
      By default, git fetch fetches all of the branches in the remote repository. The reason for this is the following section of the .git/config file
      [remote "origin"]
-       url = https://git@github.com:mary/example-repo.git
-       fetch = +refs/heads/*:refs/remotes/origin/*
+       url = https://git@github.com=:mary=/example-repo.git
+       fetch = +refs/heads/*=:refs=/remotes/origin/*
 
      To fetch only the master branch, change the fetch line to match the following
         [remote "origin"]
-            url = https://git@github.com:mary/example-repo.git
-            fetch = +refs/heads/master:refs/remotes/origin/master
+            url = https://git@github.com=:mary=/example-repo.git
+            fetch = +refs/heads/master=:refs=/remotes/origin/master
 
      if you want to always push the master branch to qa-master in the origin remote
         [remote "origin"]
-            url = https://git@github.com:mary/example-repo.git
-            fetch = +refs/heads/master:refs/remotes/origin/master
-            push = refs/heads/master:refs/heads/qa-master
+            url = https://git@github.com=:mary=/example-repo.git
+            fetch = +refs/heads/master=:refs=/remotes/origin/master
+            push = refs/heads/master=:refs=/heads/qa-master
 **** git head
      #+BEGIN_SRC sh
        # grandparent of HEAD
@@ -2346,7 +2455,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 **** git show
      #+BEGIN_SRC sh
        # bring back deleted file from some version
-       git show commit_id:path/to/file > path/to/file
+       git show commit_id=:path=/to/file > path/to/file
      #+END_SRC
 **** git stash
      #+BEGIN_SRC sh
@@ -2476,7 +2585,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
          @synthesize delegate; //synthesise  MyClassDelegate delegate
 
          - (void) myMethodToDoStuff {
-             [self.delegate myClassDelegateMethod:self]; //this will call the method implemented in your other class
+             [self.delegate myClassDelegateMethod=:self=]; //this will call the method implemented in your other class
          }
 
          @end
@@ -2484,7 +2593,7 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
 **** To use your delegate in another class (UIViewController called MyVC in this case) MyVC.h:
         #+BEGIN_SRC c
           #import "MyClass.h"
-          @interface MyVC:UIViewController <MyClassDelegate> { //make it a delegate for MyClassDelegate
+          @interface MyVC=:UIViewController= <MyClassDelegate> { //make it a delegate for MyClassDelegate
           }
         #+END_SRC
 **** MyVC.m:
