@@ -889,7 +889,22 @@ Out[3]: 2
      SCHEDULED: <2016-08-25 Thu>
 *** TODO [[https://github.com/soumith/convnet-benchmarks][convnet benchmarks]]
     SCHEDULED: <2016-09-09 Fri>
-** Emacs Notes
+** Emacs Notese
+*** install =emacs25= in Ubuntu16.04
+
+    #+BEGIN_SRC sh
+      sudo add-apt-repository ppa:kelleyk/emacs
+      sudo apt-get update
+      sudo apt-get install emacs25
+    #+END_SRC
+
+    #+BEGIN_SRC sh
+      sudo apt-get install -y software-properties-common
+      sudo add-apt-repository -y ppa:ubuntu-elisp/ppa
+      sudo apt-get update
+      sudo apt-get install -y emacs-snapshot
+    #+END_SRC
+
 *** Print the emacs package name that a function belongs to
     
     #+BEGIN_SRC elisp
@@ -1391,16 +1406,19 @@ array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
   sudo usermod -aG docker sxwl1080
 #+END_SRC
 *** docker sourcelist
-ubuntu: /etc/default/docker 
-#+BEGIN_SRC example
-DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com=:5000=
-#+END_SRC
 
-#+BEGIN_SRC sh
-  sudo echo "DOCKER_OPTS=\"\$DOCKER_OPTS --registry-mirror=http://hub-mirror.c.163.com\"" >> /etc/default/docker
+    ubuntu: /etc/default/docker
 
-  service docker restart
-#+END_SRC
+    #+BEGIN_SRC example
+    DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com=:5000=
+    #+END_SRC
+
+
+    #+BEGIN_SRC sh
+    sudo echo "DOCKER_OPTS=\"\$DOCKER_OPTS --registry-mirror=http://hub-mirror.c.163.com\"" >> /etc/default/docker
+
+    service docker restart
+    #+END_SRC
 *** docker push
     unauthorized: authentication required
     sudo docker login --username=xiaoxinyi
@@ -1437,6 +1455,8 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry dl.dockerpool.com=:
      To clarify: an example for =CMD= would be running an application
      upon creation of a container which is already installed using =RUN=
      (e.g. =RUN apt-get install= …) inside the image. 
+*** docker resource
+    - [[https://github.com/veggiemonk/awesome-docker#docker-compose-file][awwsome docker]]
 ** Proxy
 *** proxychains
 #+BEGIN_SRC sh
@@ -2256,11 +2276,6 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
          Requests they have received on the right side of the
          screen. 
 *** [[https://www.atlassian.com/git/tutorials/syncing][git sync tutorial]]
-*** ssh-key password
-    * use ssh address not https
-    #+BEGIN_SRC sh
-      git remote set-url origin git@github.com=:yourname=/yourrepo.git
-    #+END_SRC
 *** Creating mutilple github accounts
     1. create another ssh key for a completely new account on Github
        #+BEGIN_SRC sh
