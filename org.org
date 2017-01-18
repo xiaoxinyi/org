@@ -24,6 +24,11 @@ sudo add-apt-repository ppa:graphics-drivers/ppa
 
 sudo apt-get update && sudo apt-get install nvidia-355
 #+END_SRC
+*** use =pkg-config= find opencv libs
+    
+    #+BEGIN_SRC  sh
+      pkg-config opencv --libs
+    #+END_SRC
 *** apt-get list installed packages
 #+BEGIN_SRC sh
 apt list --installed
@@ -91,6 +96,31 @@ sudo apt-get update && sudo apt-get install nvidia-355
      #+BEGIN_SRC sh
        ar -t xx.a
      #+END_SRC
+*** tee
+    
+    #+BEGIN_SRC sh
+      # This simply redirects stderr to stdout, so tee echoes both to log and to screen
+      ./aaa.sh 2>&1 | tee -a log
+    #+END_SRC
+*** change dns
+
+    edit =/etc/resolv.conf=
+    =nameserver 114.114.114.114=
+*** get pid from port
+    
+    #+BEGIN_SRC sh
+      sudo netstat -peanut | grep -i port
+    #+END_SRC
+*** tcpdump
+**** example
+     Capture any packets with destination IP 192.168.1.1 and
+     destination port 80 or 443. Display IP addresses and port
+     numbers:
+     #+BEGIN_SRC sh
+       tcpdump -n "dst host 192.168.1.1 and (dst port 80 or dst port 443)"
+     #+END_SRC
+**** reference
+     [[http://rationallyparanoid.com/articles/tcpdump.html][tcpdump manual]]
 ** Tmux Note
 *** =tmux= plugin installation
     Add plugin to the list of TPM plugins in =.tmux.conf=:
@@ -2217,9 +2247,16 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
     : d
     : s
 *** [[http://www.newthinktank.com/2015/06/learn-lua-one-video/][one video tutorial for lua]]
+*** install =lua5.3=
+    #+BEGIN_SRC sh
+      curl -R -O http://www.lua.org/ftp/lua-5.3.3.tar.gz
+      tar zxf lua-5.3.3.tar.gz
+      cd lua-5.3.3
+      make macosx test
+    #+END_SRC
 ** Git
 *** [[https://www.quora.com/What-is-the-best-Git-cheat-sheet][git cheatsheet]]
-*** Git stah
+*** Git stash
 **** TODO [[https://git-scm.com/book/zh/v1/Git-%25E5%25B7%25A5%25E5%2585%25B7-%25E5%2582%25A8%25E8%2597%258F%25EF%25BC%2588Stashing%25EF%25BC%2589][tutorial]]
 *** ssh-key password
     * use ssh address not https
