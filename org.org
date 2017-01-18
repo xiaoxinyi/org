@@ -2667,3 +2667,30 @@ to another class.
 ** Sublime Text
 **** show line number
      - preference -> add "line_numbers": true
+** Cmake
+*** file and wildcard
+    
+    #+BEGIN_SRC 
+      file(GLOB SOURCES "src/*.cpp")
+    #+END_SRC
+
+*** =add_custom_command=
+
+    #+BEGIN_SRC 
+      # first we add the executable that generates the table
+      add_executable(MakeTable MakeTable.cpp)
+
+      # add the command to generate the source code
+      add_custom_command (
+          OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Table.h
+          COMMAND MakeTable ${CMAKE_CURRENT_BINARY_DIR}/Table.h
+          DEPENDS MakeTable
+      )
+    #+END_SRC
+
+*** install
+
+    #+BEGIN_SRC 
+       install (TARGETS MathFunctions DESTINATION bin)
+       install (FILES MathFunctions.h DESTINATION include)
+    #+END_SRC
