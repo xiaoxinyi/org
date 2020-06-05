@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{k+kn}{from} \PYGdefault{n+nn}{spam} \PYGdefault{k+kn}{import} \PYGdefault{n}{blah}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{n}{blah}\PYGdefault{o}{.}\PYGdefault{n}{\PYGdefaultZus{}\PYGdefaultZus{}module\PYGdefaultZus{}\PYGdefaultZus{}}
+\PYGdefault{l+s+s1}{\PYGdefaultZsq{}spam\PYGdefaultZsq{}}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{n}{blah}\PYGdefault{o}{.}\PYGdefault{n}{\PYGdefaultZus{}\PYGdefaultZus{}globals\PYGdefaultZus{}\PYGdefaultZus{}}
+\PYGdefault{p}{\PYGdefaultZob{}} \PYGdefault{l+s+s1}{\PYGdefaultZsq{}x\PYGdefaultZsq{}}\PYGdefault{p}{:} \PYGdefault{l+m+mi}{42}\PYGdefault{p}{,} \PYGdefault{o}{...}\PYGdefault{p}{\PYGdefaultZcb{}}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}}
+\end{Verbatim}

@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{c+c1}{\PYGdefaultZsh{} spam.py}
+\PYGdefault{k}{def} \PYGdefault{n+nf}{grok}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{):}
+    \PYGdefault{o}{...}
+
+\PYGdefault{k}{def} \PYGdefault{n+nf}{blah}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{):}
+    \PYGdefault{o}{...}
+\end{Verbatim}

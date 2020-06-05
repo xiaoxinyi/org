@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{c+c1}{\PYGdefaultZsh{} spam.py}
+
+\PYGdefault{o}{...}
+\PYGdefault{k}{if} \PYGdefault{n}{\PYGdefaultZus{}\PYGdefaultZus{}name\PYGdefaultZus{}\PYGdefaultZus{}} \PYGdefault{o}{==} \PYGdefault{l+s+s1}{\PYGdefaultZsq{}\PYGdefaultZus{}\PYGdefaultZus{}main\PYGdefaultZus{}\PYGdefaultZus{}\PYGdefaultZsq{}}\PYGdefault{p}{:}
+    \PYGdefault{c+c1}{\PYGdefaultZsh{} Running as the main program}
+    \PYGdefault{o}{...}
+\end{Verbatim}

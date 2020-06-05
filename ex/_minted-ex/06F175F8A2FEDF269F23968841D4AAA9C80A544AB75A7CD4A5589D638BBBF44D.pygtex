@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{p}{(}\PYGdefault{n+nb}{+} \PYGdefault{l+m+mi}{1} \PYGdefault{l+m+mi}{2}\PYGdefault{p}{)}
+
+\PYGdefault{p}{(}\PYGdefault{k}{setq} \PYGdefault{n+nv}{name} \PYGdefault{l+s}{\PYGdefaultZdq{}zhangli\PYGdefaultZdq{}}\PYGdefault{p}{)}
+
+\PYGdefault{p}{(}\PYGdefault{n+nb}{defun} \PYGdefault{n+nv}{print\PYGdefaultZhy{}name} \PYGdefault{p}{(}\PYGdefault{n+nv}{name}\PYGdefault{p}{)}
+  \PYGdefault{p}{(}\PYGdefault{n+nb}{print} \PYGdefault{p}{(}\PYGdefault{n+nb}{format} \PYGdefault{l+s}{\PYGdefaultZdq{}Hello, \PYGdefaultZpc{}s!\PYGdefaultZbs{}n\PYGdefaultZdq{}} \PYGdefault{n+nv}{name}\PYGdefault{p}{)))}
+
+\PYGdefault{p}{(}\PYGdefault{n+nv}{print\PYGdefaultZhy{}name} \PYGdefault{n+nv}{name}\PYGdefault{p}{)}
+\end{Verbatim}

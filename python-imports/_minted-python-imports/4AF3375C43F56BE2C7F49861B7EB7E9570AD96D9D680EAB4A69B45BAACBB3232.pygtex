@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{math} \PYGdefault{k+kn}{import} \PYGdefault{o}{*}
+
+\PYGdefault{k}{def} \PYGdefault{n+nf}{rectangular}\PYGdefault{p}{(}\PYGdefault{n}{r}\PYGdefault{p}{,} \PYGdefault{n}{theta}\PYGdefault{p}{):}
+    \PYGdefault{n}{y} \PYGdefault{o}{=} \PYGdefault{n}{x} \PYGdefault{o}{*} \PYGdefault{n}{cos}\PYGdefault{p}{(}\PYGdefault{n}{theta}\PYGdefault{p}{)}
+    \PYGdefault{n}{y} \PYGdefault{o}{=} \PYGdefault{n}{r} \PYGdefault{o}{*} \PYGdefault{n}{sin}\PYGdefault{p}{(}\PYGdefault{n}{theta}\PYGdefault{p}{)}
+    \PYGdefault{k}{return} \PYGdefault{n}{x}\PYGdefault{p}{,} \PYGdefault{n}{y}
+\end{Verbatim}

@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{k+kn}{import} \PYGdefault{n+nn}{sys}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{n}{sys}\PYGdefault{o}{.}\PYGdefault{n}{path} \PYGdefault{p}{[}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}\PYGdefaultZsq{}}\PYGdefault{p}{,}
+      \PYGdefault{l+s+s1}{\PYGdefaultZsq{}/usr/local/lib/python34.zip\PYGdefaultZsq{}}\PYGdefault{p}{,}
+      \PYGdefault{l+s+s1}{\PYGdefaultZsq{}/usr/local/lib/python3.4\PYGdefaultZsq{}}\PYGdefault{p}{,}
+      \PYGdefault{l+s+s1}{\PYGdefaultZsq{}/usr/local/lib/python3.4/plat\PYGdefaultZhy{}darwin\PYGdefaultZsq{}}\PYGdefault{p}{,}
+      \PYGdefault{l+s+s1}{\PYGdefaultZsq{}/usr/local/lib/python3.4/lib\PYGdefaultZhy{}dynload\PYGdefaultZsq{}}\PYGdefault{p}{,}
+      \PYGdefault{l+s+s1}{\PYGdefaultZsq{}/usr/local/lib/python3.4/site\PYGdefaultZhy{}packages\PYGdefaultZsq{}}\PYGdefault{p}{]}
+\end{Verbatim}

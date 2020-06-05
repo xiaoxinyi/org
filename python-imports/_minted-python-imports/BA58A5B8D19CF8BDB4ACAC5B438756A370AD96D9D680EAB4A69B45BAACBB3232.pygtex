@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{k+kn}{from} \PYGdefault{n+nn}{importlib} \PYGdefault{k+kn}{import} \PYGdefault{n+nb}{reload}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{n+nb}{reload}\PYGdefault{p}{(}\PYGdefault{n}{spam}\PYGdefault{p}{)}
+\PYGdefault{o}{\PYGdefaultZlt{}}\PYGdefault{n}{module} \PYGdefault{l+s+s1}{\PYGdefaultZsq{}spam\PYGdefaultZsq{}} \PYGdefault{k+kn}{from} \PYGdefault{l+s+s1}{\PYGdefaultZsq{}spam.py\PYGdefaultZsq{}}\PYGdefault{o}{\PYGdefaultZgt{}}
+\end{Verbatim}

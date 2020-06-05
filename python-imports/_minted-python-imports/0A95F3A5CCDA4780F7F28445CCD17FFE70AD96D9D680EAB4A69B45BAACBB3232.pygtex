@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{k+kn}{import} \PYGdefault{n+nn}{spam}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{k+kn}{import} \PYGdefault{n+nn}{sys}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{l+s+s1}{\PYGdefaultZsq{}spam\PYGdefaultZsq{}} \PYGdefault{o+ow}{in} \PYGdefault{n}{sys}\PYGdefault{o}{.}\PYGdefault{n}{modules}
+\PYGdefault{n+nb+bp}{True}
+\PYGdefault{o}{\PYGdefaultZgt{}\PYGdefaultZgt{}\PYGdefaultZgt{}} \PYGdefault{n}{sys}\PYGdefault{o}{.}\PYGdefault{n}{modules}\PYGdefault{p}{[}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}spam\PYGdefaultZsq{}}\PYGdefault{p}{]}
+\PYGdefault{o}{\PYGdefaultZlt{}}\PYGdefault{n}{module} \PYGdefault{l+s+s1}{\PYGdefaultZsq{}spam\PYGdefaultZsq{}} \PYGdefault{k+kn}{from} \PYGdefault{l+s+s1}{\PYGdefaultZsq{}spam.py\PYGdefaultZsq{}}\PYGdefault{o}{\PYGdefaultZgt{}}
+\end{Verbatim}

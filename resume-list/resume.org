@@ -1,0 +1,9 @@
+
+| id                | name | gender | age | work duration | degree | location | expected salary | major                 |
+|-------------------+------+--------+-----+---------------+--------+----------+-----------------+-----------------------|
+| de8d2370Ea397b58c |      | f      |  32 |             6 | master | hangzhou | 13k * 12        | 计算机视觉工程师      |
+| dd842e75Ka597bf8e |      | m      |  36 |             6 | master | hangzhou |                 | C++图像算法工程师     |
+| d08f2a74Qa99bbc8d |      | m      |  32 |             5 | master | wuxi     |                 | FPGA/数字IC设计工程师 |
+|                   |      |        |     |               |        |          |                 |                       |
+| `                 |      |        |     |               |        |          |                 |                       |
+

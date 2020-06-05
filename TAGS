@@ -1,0 +1,105 @@
+
+/Users/zhangli/Desktop/org-mode/ex/ex.html,137
+ex.html1,0
+ function CodeHighlightOn(elem, id)CodeHighlightOn123,4479
+ function CodeHighlightOff(elem, id)CodeHighlightOff133,4773
+
+/Users/zhangli/Desktop/org-mode/ex/ex.tex,635
+ex.tex1,0
+\section{outliner}outliner32,670
+\subsection{more iterms}more iterms35,730
+\subsection{yet more}yet more37,780
+\section{MarkUp}MarkUp40,828
+\section{Tables}Tables51,1042
+\section{Export to other format}Export to other format63,1211
+\section{Source code}Source code67,1271
+\section{Latex integration}Latex integration81,1464
+\section{Literate programming}Literate programming94,1686
+\section{Todo stuff}Todo stuff108,1903
+\subsection{{\bfseries\sffamily TODO} cycle through states}bfseries sffamily TODO110,1950
+\subsection{{\bfseries\sffamily DONE} explain todo lists}bfseries sffamily DONE112,2036
+
+/Users/zhangli/Desktop/org-mode/ex/ex2.tex,317
+ex2.tex1,0
+\section{Introduction}Introduction34,735
+\subsection{A simple slide}A simple slide37,784
+\subsection{A more complex slide}A more complex slide52,1209
+\subsubsection[Org mode increases productivity]{Org mode increases productivity\hfill{}\textsc{B\_theorem}}Org mode increases productivity56,1386
+
+/Users/zhangli/Desktop/org-mode/example.tex,17
+example.tex1,0
+
+/Users/zhangli/Desktop/org-mode/org.html,138
+org.html1,0
+ function CodeHighlightOn(elem, id)CodeHighlightOn123,4452
+ function CodeHighlightOff(elem, id)CodeHighlightOff133,4746
+
+/Users/zhangli/Desktop/org-mode/presentation-hatm/hatm.html,15
+hatm.html1,0
+
+/Users/zhangli/Desktop/org-mode/presentation-hatm/hatm.tex,14
+hatm.tex1,0
+
+/Users/zhangli/Desktop/org-mode/python-imports/python-imports.html,25
+python-imports.html1,0
+
+/Users/zhangli/Desktop/org-mode/python-imports/python-imports.tex,665
+python-imports.tex1,0
+\section*{Modules}Modules32,653
+\section*{Namespaces}Namespaces56,1039
+\section*{Global Variables}Global Variables81,1409
+\section*{Module Execution}Module Execution106,1839
+\section*{\texttt{from module import}}texttt from module import120,2341
+\subsection*{\texttt{from module import *}}texttt from module import139,2809
+\subsection*{Commentary}Commentary158,3239
+\subsection*{Module Names}Module Names176,3672
+\subsection*{Naming Conventions}Naming Conventions197,4050
+\subsection*{Module Search Path}Module Search Path205,4290
+\subsection*{Module Cashe}Module Cashe228,4912
+\subsection*{Comments}Comments329,7138
+
+/Users/zhangli/Desktop/org-mode/resume-list/resume.html,141
+resume.html1,0
+ function CodeHighlightOn(elem, id)CodeHighlightOn123,4452
+ function CodeHighlightOff(elem, id)CodeHighlightOff133,4746
+
+/Users/zhangli/Desktop/org-mode/sgs.py,1967
+sgs.py1,0
+import datasetsdatasets1,0
+import datasets.sgsdatasets2,16
+import datasets.sgssgs2,16
+import osos3,36
+from datasets.imdb import imdbimdb4,46
+import xml.dom.minidom as minidomxml5,77
+import xml.dom.minidom as minidomdom5,77
+import xml.dom.minidom as minidomminidom5,77
+import numpy as npnp6,111
+import scipy.sparsescipy7,130
+import scipy.sparsesparse7,130
+import scipy.io as sioscipy8,150
+import scipy.io as siosio8,150
+import utils.cython_bboxutils9,173
+import utils.cython_bboxcython_bbox9,173
+import cPicklecPickle10,198
+import subprocesssubprocess11,213
+class sgs(imdb):sgs13,232
+    def __init__(self, image_set, devkit_path):__init__14,249
+    def image_path_at(self, i):image_path_at37,1271
+    def image_path_from_index(self, index):image_path_from_index43,1459
+    def _load_image_set_index(self):_load_image_set_index56,1935
+    def gt_roidb(self):gt_roidb70,2526
+    def selective_search_roidb(self):selective_search_roidb90,3328
+    def _load_selective_search_roidb(self, gt_roidb):_load_selective_search_roidb118,4430
+	raw_data = sio.loadmat(filename)['all_boxes'].ravel()raw_data123,4736
+    def selective_search_IJCV_roidb(self):selective_search_IJCV_roidb131,4982
+    def _load_selective_search_IJCV_roidb(self, gt_roidb):_load_selective_search_IJCV_roidb156,5992
+    def _load_sgs_annotation(self, index):_load_sgs_annotation172,6759
+	num_objs = len(data)num_objs182,7099
+    def _write_sgs_results_file(self, all_boxes):_write_sgs_results_file207,7949
+    def _do_matlab_eval(self, comp_id, output_dir='output'):_do_matlab_eval233,9183
+    def evaluate_detections(self, all_boxes, output_dir):evaluate_detections247,9864
+    def competition_mode(self, on):competition_mode251,10032
+    d = datasets.sgs('train', '')d260,10297
+    res = d.roidbres261,10331
+    from IPython import embed; embed()embed262,10349
+    from IPython import embed; embed()embed262,10349

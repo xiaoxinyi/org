@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{spam.foo}
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{spam.bar} \PYGdefault{k+kn}{import} \PYGdefault{n}{grok}
+\end{Verbatim}

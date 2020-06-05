@@ -919,7 +919,7 @@ Out[3]: 2
      SCHEDULED: <2016-08-25 Thu>
 *** TODO [[https://github.com/soumith/convnet-benchmarks][convnet benchmarks]]
     SCHEDULED: <2016-09-09 Fri>
-** Emacs Notese
+** Emacs Notes
 *** install =emacs25= in Ubuntu16.04
 
     #+BEGIN_SRC sh
@@ -2312,6 +2312,16 @@ GET, POST, PUT, DELETE就对应着对这个资源的查，改，增，删4个操
       5. The owner of the original repository can see how many Pull
          Requests they have received on the right side of the
          screen. 
+*** git http free passward
+
+    #+BEGIN_SRC sh
+      touch ~/.git-credentials
+
+      echo http://xiaoxin_yi:5778560@github.com > ~/.git-credentials
+
+      git config --global credential.helper store
+    #+END_SRC
+
 *** [[https://www.atlassian.com/git/tutorials/syncing][git sync tutorial]]
 *** Creating mutilple github accounts
     1. create another ssh key for a completely new account on Github
@@ -2694,3 +2704,18 @@ to another class.
        install (TARGETS MathFunctions DESTINATION bin)
        install (FILES MathFunctions.h DESTINATION include)
     #+END_SRC
+*** shell command =execute_process=
+
+    #+BEGIN_SRC 
+      execute_process(COMMAND getconf  _NPROCESSORS_ONLN
+                      OUTPUT_VARIABLE NB_PROCESSOR)
+      message(STATUS ${NB_PROCESSOR})
+    #+END_SRC
+
+    The =execute_process()= command is a newer more powerful version of
+    =exec_program()=, but the old command has been kept for
+    compatibility. Both commands run while =CMake= is processing the
+    project prior to build system generation. Use =add_custom_target()=
+    and =add_custom_command()= to create custom commands that run at
+    build time.
+    

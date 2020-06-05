@@ -1,0 +1,114 @@
+% Created 2016-07-04 一 09:51
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{minted}
+\author{章立}
+\date{\today}
+\title{An Introduction to Org-mode}
+\hypersetup{
+ pdfauthor={章立},
+ pdftitle={An Introduction to Org-mode},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 8.3.4)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+
+\section{outliner}
+\label{sec:orgheadline3}
+text text text!
+\subsection{more iterms}
+\label{sec:orgheadline1}
+\subsection{yet more}
+\label{sec:orgheadline2}
+
+\section{MarkUp}
+\label{sec:orgheadline4}
+\textbf{Bold} \emph{italic} \texttt{verbatim} \sout{strikethrough}
+
+\begin{itemize}
+\item bullet
+\item list
+\item items
+\end{itemize}
+
+\href{https://google.com.au}{google}
+\section{Tables}
+\label{sec:orgheadline5}
+
+\begin{center}
+\begin{tabular}{rl}
+Some & Data\\
+\hline
+34 & shut the door\\
+12 & bulck my shoe\\
+\end{tabular}
+\end{center}
+
+\section{Export to other format}
+\label{sec:orgheadline6}
+
+
+\section{Source code}
+\label{sec:orgheadline7}
+
+\begin{minted}[]{python}
+def fib(n):
+    if n <= 1:
+        return 1
+    return fib(n-1) + fib(n-2)
+
+print fib(10)
+print('hello')
+\end{minted}
+
+
+\section{Latex integration}
+\label{sec:orgheadline8}
+
+\begin{itemize}
+\item Characters: \(\alpha\) \(\rightarrow\) \(\beta\)
+\item \(O(n log(n))\)
+\end{itemize}
+
+\begin{align*}
+a + b &= 2 + 23 \\
+      &= 25
+\end{align*}
+
+\section{Literate programming}
+\label{sec:orgheadline9}
+
+\begin{minted}[]{common-lisp}
+(+ 1 2)
+
+(setq name "zhangli")
+
+(defun print-name (name)
+  (print (format "Hello, %s!\n" name)))
+
+(print-name name)
+\end{minted}
+
+\section{Todo stuff}
+\label{sec:orgheadline12}
+\subsection{{\bfseries\sffamily TODO} cycle through states}
+\label{sec:orgheadline10}
+\subsection{{\bfseries\sffamily DONE} explain todo lists}
+\label{sec:orgheadline11}
+\end{document}

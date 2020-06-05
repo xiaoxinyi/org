@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{k}{def} \PYGdefault{n+nf}{fib}\PYGdefault{p}{(}\PYGdefault{n}{n}\PYGdefault{p}{):}
+    \PYGdefault{k}{if} \PYGdefault{n}{n} \PYGdefault{o}{\PYGdefaultZlt{}=} \PYGdefault{l+m+mi}{1}\PYGdefault{p}{:}
+        \PYGdefault{k}{return} \PYGdefault{l+m+mi}{1}
+    \PYGdefault{k}{return} \PYGdefault{n}{fib}\PYGdefault{p}{(}\PYGdefault{n}{n}\PYGdefault{o}{\PYGdefaultZhy{}}\PYGdefault{l+m+mi}{1}\PYGdefault{p}{)} \PYGdefault{o}{+} \PYGdefault{n}{fib}\PYGdefault{p}{(}\PYGdefault{n}{n}\PYGdefault{o}{\PYGdefaultZhy{}}\PYGdefault{l+m+mi}{2}\PYGdefault{p}{)}
+
+\PYGdefault{k}{print} \PYGdefault{n}{fib}\PYGdefault{p}{(}\PYGdefault{l+m+mi}{10}\PYGdefault{p}{)}
+\PYGdefault{k}{print}\PYGdefault{p}{(}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}hello\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\end{Verbatim}

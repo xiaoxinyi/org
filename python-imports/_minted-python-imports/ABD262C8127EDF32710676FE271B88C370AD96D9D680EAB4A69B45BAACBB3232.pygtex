@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{sys}
+      \PYGdefault{n}{sys}\PYGdefault{o}{.}\PYGdefault{n}{path}\PYGdefault{o}{.}\PYGdefault{n}{append}\PYGdefault{p}{(}\PYGdefault{l+s+s2}{\PYGdefaultZdq{}/project/foo/myfiles\PYGdefaultZdq{}}\PYGdefault{p}{)}
+\end{Verbatim}

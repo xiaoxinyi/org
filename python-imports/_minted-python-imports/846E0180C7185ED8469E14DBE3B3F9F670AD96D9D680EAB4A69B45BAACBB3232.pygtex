@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{c+c1}{\PYGdefaultZsh{} spam.py}
+
+\PYGdefault{n}{x} \PYGdefault{o}{=} \PYGdefault{l+m+mi}{42}
+
+\PYGdefault{k}{def} \PYGdefault{n+nf}{blah}\PYGdefault{p}{():}
+    \PYGdefault{k}{print}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{)}
+
+\PYGdefault{c+c1}{\PYGdefaultZsh{} eggs.py}
+
+\PYGdefault{n}{x} \PYGdefault{o}{=} \PYGdefault{l+m+mi}{37}
+
+\PYGdefault{k}{def} \PYGdefault{n+nf}{foo}\PYGdefault{p}{():}
+    \PYGdefault{k}{print}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{)}
+\end{Verbatim}

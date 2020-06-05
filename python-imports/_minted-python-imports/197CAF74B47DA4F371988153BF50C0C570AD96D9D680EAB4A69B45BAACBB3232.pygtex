@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGdefault{n}{a} \PYGdefault{o}{=} \PYGdefault{n}{spam}\PYGdefault{o}{.}\PYGdefault{n}{grok}\PYGdefault{p}{(}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}hello\PYGdefaultZsq{}}\PYGdefault{p}{)}
+
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{spam} \PYGdefault{k+kn}{import} \PYGdefault{n}{grok}
+\PYGdefault{n}{a} \PYGdefault{o}{=} \PYGdefault{n}{grok}\PYGdefault{p}{(}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}hello\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\end{Verbatim}

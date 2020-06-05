@@ -1,0 +1,108 @@
+#+OPTIONS: toc:nil
+#+TITLE: An Introduction to Org-mode
+
+* outliner
+  text text text!
+** more iterms
+** yet more
+
+* MarkUp
+  *Bold* /italic/ =verbatim= +strikethrough+
+
+- bullet 
+- list 
+- items
+
+[[https://google.com.au][google]]
+* Tables
+
+  | Some | Data          |
+  |------+---------------|
+  |   34 | shut the door |
+  |   12 | bulck my shoe |
+
+* Export to other format
+
+* Source code
+
+#+BEGIN_SRC python :results output
+  def fib(n):
+      if n <= 1:
+          return 1
+      return fib(n-1) + fib(n-2)
+
+  print fib(10)
+  print('hello')
+#+END_SRC
+
+#+RESULTS:
+: 89
+: hello
+
+* Latex integration
+
+- Characters: \alpha \rightarrow \beta
+- $O(n log(n))$
+
+\begin{align*}
+a + b &= 2 + 23 \\
+      &= 25
+\end{align*}
+
+* Literate programming
+
+#+BEGIN_SRC emacs-lisp
+  (+ 1 2)
+
+  (setq name "zhangli")
+
+  (defun print-name (name)
+    (print (format "Hello, %s!\n" name)))
+
+  (print-name name)
+
+#+END_SRC
+
+#+RESULTS:
+: Hello, zhangli!
+
+* Todo stuff 
+** TODO cycle through states
+** DONE explain todo lists
+   CLOSED: [2016-06-24 Fri 21:56]
+
+* Graphviz example
+
+#+BEGIN_SRC dot :file graphviz-example.png :exports results
+  digraph G {
+      subgraph cluster_0 {
+          style=filled;           
+          color=lightgrey;
+          node [style=filled,color=white]
+          pa0 -> a1 -> a2 -> a3;
+          label="process #1";
+      }
+
+      subgraph cluster_1 {
+          node [style=filled];
+          b0 -> b1 -> b2 -> b3;
+          label = "process #2";
+          color = blue;
+      }
+      start -> a0;
+      start -> b0;
+      a1 -> b3;
+      b2 -> a3;
+      a3 -> a0;
+      a3 -> end;
+      b3 -> endl;
+
+      start [shape=Mdiamond]
+      end [shape=Msquare]
+  }
+
+#+END_SRC
+
+#+RESULTS:
+[[file:graphviz-example.png]]
+

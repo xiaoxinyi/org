@@ -1,0 +1,101 @@
+#+OPTIONS: toc:nil
+* [#A] protocol buffer 简介
+** 什么是protocol buffers?
+Protocol buffers 是一种简单高效，可以自动[[https://en.wikipedia.org/wiki/Serialization][序列化]] 的结构化数据，如同XML。
+但是protocol buffers比XML更加简洁高效。一旦你定义好数据的结构，那么你
+就可以使用生成的代码读写数据流。这些生成代码可以是C++, C#, Go, Java,
+Python等等。
+
+** protocol buffers 是怎样工作的
+1. 在 =.proto= 文件中定义 =message type= ，有点像面向对象设计中的实体类。
+   一下是一个简单的例子： =addressbook.proto=
+#+BEGIN_SRC example
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+
+  repeated PhoneNumber phone = 4;
+}
+#+END_SRC
+- 每一个 =message type= 都有一个或者多个唯一标号的属性（field）
+- 每一个属性都有一个名字和一个值类型
+- 类型可以是数字（integer或floating-point），boolean, string, raw
+  bytes, 甚至是别的 =protocol buffer message types= （如上例所示），这样
+  就允许你层次地组织你的数据结构
+- 属性修饰关键词 =optional=, =required=, =repeated=
+一旦定义好 =messages= ，用protocol buffer的编译器 =protoc= ，把
+   =.proto= 文件转换为可以访问的类。这些类提供简单的 *访问器* ，如
+   （ =name()=, =set_name()= ），还提供了一些序列化的方法
+   （ =serialize/parse= ）读写这些 =raw bytes= 。
+#+BEGIN_SRC bash
+protoc -I=$SRC_DIR --cpp_out=$DST_DIR $SRC_DIR/addressbook.proto
+#+END_SRC
+编译后将生成两个文件：
+- =addressbook.pb.h= 头文件包含了所有 =messages= 对应类的定义
+- =addressbook.pb.cc= 原文件中包含了所有这些类的实现
+
+如果你使用 =C++= ，可以用 =protoc= 编译上面的 =addressbook.proto= 文件,
+可以生成一个 =Person= 类，可以如下使用这个类：
+#+BEGIN_SRC c++
+Person person;
+person.set_name("John Doe");
+person.set_id(1234)
+person.set_email("jdoe@example.com");
+fstream output("myfile", ios::out | ios::binary);
+person.SerializeToOstream(&output);
+
+// You could read your message back
+fstream input("myfile" ios::in | ios::binary);
+Person person();
+person.ParseFromIstream(&input);
+cout << "Name: " << person.name() << endl;
+cout << "E-mail: " << person.email() << endl;
+#+END_SRC 
+你还可以增加新的属性，但是当你 =parse= 旧的序列化的文件时，需要忽略那些新增加的属性
+
+** 为什么不用XML
+在序列化数据方面，Protocol buffers比起XML有很多优势：
+- 简单、清晰
+- 小3－10倍
+- 快20-100倍
+- 自动生成简单易用的类
+例如，我们建模一个 =person=,有属性 =name=, =email= 两个属性。在XML中你需要
+这样做：
+#+BEGIN_SRC example
+<person>
+  <name>John Doe</name>
+  <email>jdoe@example.com</email>
+</person>
+#+END_SRC
+
+ 
+如果你使用protocol buffer把上面的 =message= 编码成二进制格式，大概需要28
+个字节，需要100-200纳秒去 =parse= 。而XML格式的，至少需要69字节（去除空
+格），需要5000－10000纳秒去 =parse= 。
+
+而且操作protocol buffer更加简单，如：
+#+BEGIN_SRC c++
+  cout << "Name: " << person.name() << endl;
+  cout << "E-mail: " << person.email() << endl;
+#+END_SRC
+而操作XML你需要像这样：
+#+BEGIN_SRC c++
+ cout << "Name: "
+       << person.getElementsByTagName("name")->item(0)->innerText()
+       << endl;
+  cout << "E-mail: "
+       << person.getElementsByTagName("email")->item(0)->innerText()
+       << endl;
+#+END_SRC

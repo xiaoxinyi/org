@@ -1,0 +1,8 @@
+(+ 1 2)
+
+(setq name "zhangli")
+
+(defun print-name (name)
+  (print (format "Hello, %s!\n" name)))
+
+(print-name name)
